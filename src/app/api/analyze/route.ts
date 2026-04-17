@@ -62,9 +62,7 @@ export async function POST(req: NextRequest) {
       console.error("Image scrape error:", e);
     }
 
-    // 3. Gemini API を使用したテキスト解析と判定
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
-    
+    // 3. Gemini API を使用したテキスト解析と判定（503の場合は別モデルにフォールバック）
     const prompt = `
 あなたは優秀な「ダイエット商品の口コミ・ステマ判定AI」です。
 ユーザーが調べたい商品名: 「${productName}」
@@ -98,8 +96,29 @@ ${searchSnippets}
 }
     `;
 
-    const result = await model.generateContent(prompt);
-    const responseText = result.response.text();
+    const MODELS_TO_TRY = ['gemini-2.5-flash', 'gemini-2.5-flash-lite', 'gemini-2.0-flash-lite'];
+    let responseText = '';
+    let lastError: any = null;
+
+    for (const modelName of MODELS_TO_TRY) {
+      try {
+        const model = genAI.getGenerativeModel({ model: modelName });
+        const result = await model.generateContent(prompt);
+        responseText = result.response.text();
+        lastError = null;
+        break;
+      } catch (e: any) {
+        console.warn(`Model ${modelName} failed: ${e.message}`);
+        lastError = e;
+        if (!e.message?.includes('503') && !e.message?.includes('overloaded') && !e.message?.includes('high demand')) {
+          throw e;
+        }
+      }
+    }
+
+    if (!responseText && lastError) {
+      throw new Error('AIモデルが現在混み合っています。少し待ってから再度お試しください。');
+    }
     
     // JSONのパース
     const jsonStr = responseText.replace(/```json\n?|\n?```/g, '').trim();
