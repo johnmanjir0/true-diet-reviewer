@@ -63,7 +63,7 @@ export async function POST(req: NextRequest) {
     }
 
     // 3. Gemini API を使用したテキスト解析と判定
-    const model = genAI.getGenerativeModel({ model: 'gemini-flash-latest' });
+    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
     
     const prompt = `
 あなたは優秀な「ダイエット商品の口コミ・ステマ判定AI」です。
