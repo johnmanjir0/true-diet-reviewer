@@ -215,7 +215,7 @@ export default function Home() {
                   <h4>{result.productName}</h4>
                   <div className="affiliate-buttons-small">
                     <a 
-                      href={`https://www.amazon.co.jp/s?k=${encodeURIComponent(result.productName)}&tag=YOUR_AMAZON_TAG_HERE`} 
+                      href={`https://www.amazon.co.jp/s?k=${encodeURIComponent(result.productName)}&tag=s19801111-22`} 
                       target="_blank" 
                       rel="noopener noreferrer" 
                       className="affiliate-btn affiliate-amazon"
