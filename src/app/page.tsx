@@ -125,29 +125,45 @@ export default function Home() {
                 <RiskIcon level={result.riskLevel} />
                 総合判定: {result.riskLevel}
               </div>
-              
-              {result.subscriptionRisk?.hasSubscription && (
-                <div style={{ padding: "1rem", background: "#fffbeb", border: "1px solid #fde68a", borderRadius: "12px", color: "#92400e", width: "100%", maxWidth: "600px", fontSize: "0.95rem" }}>
-                  <strong><AlertTriangle size={18} style={{ display: "inline", verticalAlign: "text-bottom", marginRight: "4px" }}/>【定期購入に関する注意】</strong><br/>
-                  {result.subscriptionRisk.notes}
-                </div>
-              )}
             </div>
 
-            <div className="scores-grid">
-              <ScoreBar label="ステマ危険度" score={result.scores.stemaRisk} type="negative" icon={ShieldAlert} />
-              <ScoreBar label="効果の信頼性" score={result.scores.effectiveness} type="positive" icon={Sparkles} />
-              <ScoreBar label="コスパ満足度" score={result.scores.costPerformance} type="positive" icon={DollarSign} />
-              <ScoreBar label="副作用・健康リスク" score={result.scores.healthRisk} type="negative" icon={HeartPulse} />
-              <ScoreBar label="継続のしやすさ" score={result.scores.continuation} type="positive" icon={Activity} />
+            {/* 定期購入情報は常に表示 */}
+            <div style={{ padding: "1rem", background: result.subscriptionRisk?.hasSubscription ? "#fffbeb" : "#f0fdf4", border: `1px solid ${result.subscriptionRisk?.hasSubscription ? "#fde68a" : "#bbf7d0"}`, borderRadius: "12px", color: result.subscriptionRisk?.hasSubscription ? "#92400e" : "#166534", marginBottom: "2rem", fontSize: "0.95rem" }}>
+              <strong>
+                {result.subscriptionRisk?.hasSubscription
+                  ? <><AlertTriangle size={18} style={{ display: "inline", verticalAlign: "text-bottom", marginRight: "4px" }}/>【定期購入あり・注意】</>
+                  : <><ShieldCheck size={18} style={{ display: "inline", verticalAlign: "text-bottom", marginRight: "4px" }}/>【定期購入】</>
+                }
+              </strong><br/>
+              {result.subscriptionRisk?.notes || "定期購入に関する情報は見つかりませんでした。"}
             </div>
 
-            <div className="score-card score-negative" style={{ marginTop: '1.5rem', background: 'rgba(255,255,255,0.5)' }}>
-              <div className="score-header">
-                <span>検索上位のアフィリエイト広告率（推定）</span>
-                <span>{result.adRatio}%</span>
+            {/* 色の凡例 */}
+            <div style={{ display: "flex", gap: "1.5rem", marginBottom: "1rem", fontSize: "0.85rem", color: "#64748b" }}>
+              <span style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
+                <span style={{ display: "inline-block", width: "24px", height: "10px", borderRadius: "5px", background: "linear-gradient(90deg, #34d399, #10b981)" }}></span>
+                緑＝高いほど良い
+              </span>
+              <span style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
+                <span style={{ display: "inline-block", width: "24px", height: "10px", borderRadius: "5px", background: "linear-gradient(90deg, #fbbf24, #ef4444)" }}></span>
+                赤＝高いほど危険・注意
+              </span>
+            </div>
+
+            {/* スコア 左右2列レイアウト */}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.5rem" }}>
+              {/* 左列：良い指標 */}
+              <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+                <ScoreBar label="効果の信頼性" score={result.scores.effectiveness} type="positive" icon={Sparkles} />
+                <ScoreBar label="コスパ満足度" score={result.scores.costPerformance} type="positive" icon={DollarSign} />
+                <ScoreBar label="継続のしやすさ" score={result.scores.continuation} type="positive" icon={Activity} />
               </div>
-              <div className="progress-bg"><div className="progress-fill" style={{ width: `${result.adRatio}%` }}></div></div>
+              {/* 右列：リスク指標 */}
+              <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+                <ScoreBar label="ステマ危険度" score={result.scores.stemaRisk} type="negative" icon={ShieldAlert} />
+                <ScoreBar label="アフィリエイト広告率" score={result.adRatio} type="negative" icon={DollarSign} />
+                <ScoreBar label="副作用・健康リスク" score={result.scores.healthRisk} type="negative" icon={HeartPulse} />
+              </div>
             </div>
 
             <div className="details-grid">
