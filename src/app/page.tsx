@@ -268,6 +268,21 @@ export default function Home() {
 
               {/* 楽天市場 アフィリエイト検索ボタン */}
               <div style={{ marginTop: "1.5rem" }}>
+                {/* 商品画像カード */}
+                {result.imageUrl && (
+                  <div style={{ display: "flex", alignItems: "center", gap: "1.5rem", background: "#fff", border: "1px solid #e2e8f0", borderRadius: "16px", padding: "1.2rem", marginBottom: "0.5rem" }}>
+                    <img
+                      src={result.imageUrl}
+                      alt={result.productName}
+                      style={{ width: "100px", height: "100px", objectFit: "contain", borderRadius: "8px", flexShrink: 0, background: "#f8fafc" }}
+                      onError={e => { (e.target as HTMLImageElement).style.display = "none"; }}
+                    />
+                    <div>
+                      <p style={{ fontWeight: "bold", fontSize: "1rem", color: "#1e293b", marginBottom: "0.3rem" }}>{result.productName}</p>
+                      <p style={{ fontSize: "0.85rem", color: "#64748b" }}>※画像はWEB検索から自動取得しています</p>
+                    </div>
+                  </div>
+                )}
                 <h3 style={{ fontSize: "1.1rem", fontWeight: "bold", color: "#1e293b", marginBottom: "1rem" }}>🛒 この商品を購入・比較する</h3>
                 <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
                   <a
