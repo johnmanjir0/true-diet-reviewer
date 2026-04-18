@@ -31,6 +31,7 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [rakutenItems, setRakutenItems] = useState<any[]>([]);
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,23 +40,29 @@ export default function Home() {
     setLoading(true);
     setResult(null);
     setError(null);
+    setRakutenItems([]);
 
     try {
-      const response = await fetch("/api/analyze", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ productName: query }),
-      });
+      // Gemini解析と楽天商品検索を並行実行
+      const [analysisResponse, rakutenResponse] = await Promise.all([
+        fetch("/api/analyze", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ productName: query }),
+        }),
+        fetch(`/api/rakuten?keyword=${encodeURIComponent(query)}`),
+      ]);
 
-      const data = await response.json();
-
-      if (!response.ok) {
+      const data = await analysisResponse.json();
+      if (!analysisResponse.ok) {
         throw new Error(data.error || "情報の取得に失敗しました。");
       }
-
       setResult(data);
+
+      const rakutenData = await rakutenResponse.json();
+      if (rakutenData.items) {
+        setRakutenItems(rakutenData.items);
+      }
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -259,36 +266,54 @@ export default function Home() {
                 ※ここにGoogle AdSense等の広告が表示されます
               </div>
 
-              {/* 商品カード */}
-              <div className="product-card">
-                <div className="product-card-image">
-                  {result.imageUrl ? (
-                    <img src={result.imageUrl} alt={result.productName} />
-                  ) : (
-                    <div className="no-image"><ShoppingCart size={40} opacity={0.5} /></div>
-                  )}
-                </div>
-                <div className="product-card-content">
-                  <h4>{result.productName}</h4>
-                  <div className="affiliate-buttons-small">
-                    <a 
-                      href={`https://www.amazon.co.jp/s?k=${encodeURIComponent(result.productName)}&tag=s19801111-22`} 
-                      target="_blank" 
-                      rel="noopener noreferrer" 
-                      className="affiliate-btn affiliate-amazon"
-                    >
-                      Amazonで探す
-                    </a>
-                    <a 
-                      href={`https://search.rakuten.co.jp/search/mall/${encodeURIComponent(result.productName)}/`} 
-                      target="_blank" 
-                      rel="noopener noreferrer" 
-                      className="affiliate-btn affiliate-rakuten"
-                    >
-                      楽天市場で探す
-                    </a>
+              {/* 楽天市場の商品カード一覧 */}
+              {rakutenItems.length > 0 && (
+                <div style={{ marginTop: "1.5rem" }}>
+                  <h3 style={{ fontSize: "1.1rem", fontWeight: "bold", color: "#1e293b", marginBottom: "1rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                    🛒 楽天市場で販売中の商品
+                  </h3>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+                    {rakutenItems.map((item, idx) => (
+                      <a
+                        key={idx}
+                        href={item.itemUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ display: "flex", gap: "1rem", alignItems: "center", background: "#fff", border: "1px solid #e2e8f0", borderRadius: "12px", padding: "1rem", textDecoration: "none", color: "inherit", transition: "box-shadow 0.2s" }}
+                        onMouseEnter={e => (e.currentTarget.style.boxShadow = "0 4px 16px rgba(0,0,0,0.1)")}
+                        onMouseLeave={e => (e.currentTarget.style.boxShadow = "none")}
+                      >
+                        {item.imageUrl && (
+                          <img src={item.imageUrl} alt={item.name} style={{ width: "80px", height: "80px", objectFit: "contain", borderRadius: "8px", flexShrink: 0 }} />
+                        )}
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <p style={{ fontSize: "0.9rem", fontWeight: "bold", color: "#1e293b", marginBottom: "0.3rem", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{item.name}</p>
+                          <p style={{ fontSize: "0.85rem", color: "#64748b", marginBottom: "0.3rem" }}>{item.shopName}</p>
+                          <p style={{ fontSize: "1.1rem", fontWeight: "bold", color: "#bf0000" }}>¥{item.price.toLocaleString()}</p>
+                          {item.reviewCount > 0 && (
+                            <p style={{ fontSize: "0.8rem", color: "#f59e0b" }}>★ {item.reviewAverage} ({item.reviewCount}件)</p>
+                          )}
+                        </div>
+                        <span className="affiliate-btn affiliate-rakuten" style={{ flexShrink: 0, padding: "0.5rem 1rem", fontSize: "0.85rem" }}>
+                          楽天で買う
+                        </span>
+                      </a>
+                    ))}
                   </div>
                 </div>
+              )}
+
+              {/* Amazon検索リンク */}
+              <div style={{ marginTop: "1.5rem" }}>
+                <a
+                  href={`https://www.amazon.co.jp/s?k=${encodeURIComponent(result.productName)}&tag=s19801111-22`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="affiliate-btn affiliate-amazon"
+                  style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem", width: "100%" }}
+                >
+                  <ShoppingCart size={18} /> Amazonでも探してみる
+                </a>
               </div>
 
             </div>
