@@ -266,54 +266,29 @@ export default function Home() {
                 ※ここにGoogle AdSense等の広告が表示されます
               </div>
 
-              {/* 楽天市場の商品カード一覧 */}
-              {rakutenItems.length > 0 && (
-                <div style={{ marginTop: "1.5rem" }}>
-                  <h3 style={{ fontSize: "1.1rem", fontWeight: "bold", color: "#1e293b", marginBottom: "1rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                    🛒 楽天市場で販売中の商品
-                  </h3>
-                  <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-                    {rakutenItems.map((item, idx) => (
-                      <a
-                        key={idx}
-                        href={item.itemUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={{ display: "flex", gap: "1rem", alignItems: "center", background: "#fff", border: "1px solid #e2e8f0", borderRadius: "12px", padding: "1rem", textDecoration: "none", color: "inherit", transition: "box-shadow 0.2s" }}
-                        onMouseEnter={e => (e.currentTarget.style.boxShadow = "0 4px 16px rgba(0,0,0,0.1)")}
-                        onMouseLeave={e => (e.currentTarget.style.boxShadow = "none")}
-                      >
-                        {item.imageUrl && (
-                          <img src={item.imageUrl} alt={item.name} style={{ width: "80px", height: "80px", objectFit: "contain", borderRadius: "8px", flexShrink: 0 }} />
-                        )}
-                        <div style={{ flex: 1, minWidth: 0 }}>
-                          <p style={{ fontSize: "0.9rem", fontWeight: "bold", color: "#1e293b", marginBottom: "0.3rem", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{item.name}</p>
-                          <p style={{ fontSize: "0.85rem", color: "#64748b", marginBottom: "0.3rem" }}>{item.shopName}</p>
-                          <p style={{ fontSize: "1.1rem", fontWeight: "bold", color: "#bf0000" }}>¥{item.price.toLocaleString()}</p>
-                          {item.reviewCount > 0 && (
-                            <p style={{ fontSize: "0.8rem", color: "#f59e0b" }}>★ {item.reviewAverage} ({item.reviewCount}件)</p>
-                          )}
-                        </div>
-                        <span className="affiliate-btn affiliate-rakuten" style={{ flexShrink: 0, padding: "0.5rem 1rem", fontSize: "0.85rem" }}>
-                          楽天で買う
-                        </span>
-                      </a>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Amazon検索リンク */}
+              {/* 楽天市場 アフィリエイト検索ボタン */}
               <div style={{ marginTop: "1.5rem" }}>
-                <a
-                  href={`https://www.amazon.co.jp/s?k=${encodeURIComponent(result.productName)}&tag=s19801111-22`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="affiliate-btn affiliate-amazon"
-                  style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem", width: "100%" }}
-                >
-                  <ShoppingCart size={18} /> Amazonでも探してみる
-                </a>
+                <h3 style={{ fontSize: "1.1rem", fontWeight: "bold", color: "#1e293b", marginBottom: "1rem" }}>🛒 この商品を購入・比較する</h3>
+                <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+                  <a
+                    href={`https://hb.afl.rakuten.co.jp/ichiba/52f1f988.9bcb825b.52f1f989.d0a8b332/?pc=${encodeURIComponent(`https://search.rakuten.co.jp/search/mall/${result.productName}/`)}&link_type=text`}
+                    target="_blank"
+                    rel="nofollow sponsored noopener"
+                    className="affiliate-btn affiliate-rakuten"
+                    style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem", width: "100%" }}
+                  >
+                    <ShoppingCart size={18} /> 楽天市場で価格・口コミを見る
+                  </a>
+                  <a
+                    href={`https://www.amazon.co.jp/s?k=${encodeURIComponent(result.productName)}&tag=s19801111-22`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="affiliate-btn affiliate-amazon"
+                    style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem", width: "100%" }}
+                  >
+                    <ShoppingCart size={18} /> Amazonで価格を確認する
+                  </a>
+                </div>
               </div>
 
             </div>
