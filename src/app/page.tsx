@@ -229,6 +229,29 @@ export default function Home() {
               </div>
             )}
 
+            {/* SNSシェアセクション */}
+            <div style={{ marginTop: "2rem", padding: "1.5rem", background: "rgba(248,250,252,0.8)", borderRadius: "16px", border: "1px solid var(--border)", textAlign: "center" }}>
+              <p style={{ marginBottom: "1rem", fontWeight: "bold", color: "#475569" }}>📣 判定結果をシェアして周りに教えよう！</p>
+              <div style={{ display: "flex", gap: "1rem", justifyContent: "center", flexWrap: "wrap" }}>
+                <a
+                  href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`「${result.productName}」のAIステマ判定結果：${result.riskLevel}！\nステマ危険度: ${result.scores.stemaRisk}/100\n効果の信頼性: ${result.scores.effectiveness}/100\nhttps://true-diet-reviewer.vercel.app #ダイエット #ステマ判定 #サプリ`)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.8rem 1.8rem", borderRadius: "999px", background: "#000", color: "#fff", fontWeight: "bold", textDecoration: "none", fontSize: "0.95rem" }}
+                >
+                  𝕏 でシェア
+                </a>
+                <a
+                  href={`https://social-plugins.line.me/lineit/share?url=${encodeURIComponent("https://true-diet-reviewer.vercel.app")}&text=${encodeURIComponent(`「${result.productName}」のステマ判定結果を調べました！`)}` }
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.8rem 1.8rem", borderRadius: "999px", background: "#06C755", color: "#fff", fontWeight: "bold", textDecoration: "none", fontSize: "0.95rem" }}
+                >
+                  LINE でシェア
+                </a>
+              </div>
+            </div>
+
             {/* マネタイズセクション */}
             <div className="monetization-section">
               <div className="ad-placeholder">

@@ -21,6 +21,19 @@ export const metadata: Metadata = {
     description: "商品名を入力するだけでAIがリアルタイム解析。ステマ・定期縛りのリスクを購入前にチェックできる無料ツールです。",
     type: "website",
     locale: "ja_JP",
+    url: "https://true-diet-reviewer.vercel.app",
+    images: [{
+      url: "https://true-diet-reviewer.vercel.app/ogp.png",
+      width: 1200,
+      height: 630,
+      alt: "TrueDiet Reviewer - AIダイエット商品判定ツール",
+    }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "TrueDiet Reviewer｜ダイエット商品のステマ・口コミをAIで判定",
+    description: "ダイエット商品のステマや定期縛りをAIが暴く！商品名を入れるだけで即解析（無料）",
+    images: ["https://true-diet-reviewer.vercel.app/ogp.png"],
   },
 };
 
