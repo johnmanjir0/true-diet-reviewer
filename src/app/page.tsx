@@ -91,9 +91,22 @@ export default function Home() {
     <main className="container">
       <div className="glass-panel" style={{ marginTop: "2rem" }}>
         <h1 className="title">TrueDiet Reviewer</h1>
-        <p className="subtitle" style={{ marginBottom: "0.5rem" }}>AIによる多角的ステマ・口コミ判定ツール</p>
-        <div style={{ textAlign: "left", fontSize: "0.9rem", color: "#64748b", marginBottom: "2rem" }}>
-          ※ステマ（ステルスマーケティング）とは：企業から報酬をもらっているのに、一般客としての純粋な口コミを装って商品を宣伝するサクラ行為のことです。
+        <p className="subtitle" style={{ marginBottom: "1rem" }}>AIによる多角的ステマ・口コミ判定ツール</p>
+
+        {/* サイト説明文（SEO兼ねた紹介文） */}
+        <div style={{ background: "rgba(14,165,233,0.06)", border: "1px solid rgba(14,165,233,0.2)", borderRadius: "16px", padding: "1.5rem", marginBottom: "1.5rem", lineHeight: "1.8", color: "#334155", fontSize: "0.95rem" }}>
+          <p style={{ marginBottom: "0.8rem" }}>
+            「このダイエットサプリ、本当に効くの？」「口コミが良すぎて逆に怪しい…」
+            そんな疑問をお持ちの方のために作られた、<strong>AIが口コミをリアルタイム解析して本音を暴くツール</strong>です。
+          </p>
+          <p style={{ marginBottom: "0.8rem" }}>
+            商品名を入力するだけで、WEB上の口コミ・レビューをAIが自動収集し、
+            <strong>「ステマ危険度」「効果の信頼性」「コスパ」「健康リスク」「定期縛りの有無」</strong>など
+            6つの視点で徹底分析します。高額なダイエット商品の購入前に、ぜひ一度ご活用ください。
+          </p>
+          <p style={{ fontSize: "0.85rem", color: "#64748b" }}>
+            ※ステマ（ステルスマーケティング）とは：企業から報酬をもらいながら、一般客を装って商品を絶賛する「サクラ口コミ」のことです。
+          </p>
         </div>
 
         <form className="search-form" onSubmit={handleSearch}>

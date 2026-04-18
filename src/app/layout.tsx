@@ -13,8 +13,15 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "TrueDiet Reviewer - AIによるダイエット商品のステマ・口コミ判定",
-  description: "ダイエット商品のステマや口コミをAIが多角的に分析。効果の信頼性・コスパ・副作用リスク・定期購入の縛りなど5項目で徹底判定。購入前に必ずチェック！",
+  title: "TrueDiet Reviewer｜ダイエット商品のステマ・口コミをAIで判定",
+  description: "ダイエットサプリや痩せる商品の口コミをAIがリアルタイム解析。ステマ危険度・効果の信頼性・コスパ・副作用リスク・定期縛りの有無を6項目で徹底判定。購入前に必ずチェック！",
+  keywords: ["ダイエット", "サプリ", "口コミ", "ステマ", "判定", "AI", "副作用", "定期購入", "解約", "効果なし", "嘘"],
+  openGraph: {
+    title: "TrueDiet Reviewer｜ダイエット商品のステマ・口コミをAIで判定",
+    description: "商品名を入力するだけでAIがリアルタイム解析。ステマ・定期縛りのリスクを購入前にチェックできる無料ツールです。",
+    type: "website",
+    locale: "ja_JP",
+  },
 };
 
 export default function RootLayout({
