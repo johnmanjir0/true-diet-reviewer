@@ -125,6 +125,11 @@ export default function Home() {
                 <RiskIcon level={result.riskLevel} />
                 総合判定: {result.riskLevel}
               </div>
+              <div style={{ fontSize: "1rem", color: "#475569", textAlign: "center", maxWidth: "700px", lineHeight: "1.7" }}>
+                {result.riskLevel === "安全" && "口コミの傾向からステマや健康リスクの可能性は低く、比較的信頼できる商品です。ただし効果には個人差がありますので、最終的なご判断はご自身でお願いいたします。"}
+                {result.riskLevel === "注意" && "一部の口コミにステマの傾向や定期縛り・副作用への不安が見られます。購入前にサイトの規約や解約条件をよく確認することをおすすめします。"}
+                {result.riskLevel === "危険" && "ステマの疑いが強い口コミや、健康被害・解約トラブルの報告が多数見られます。購入には十分な注意と慎重な判断が必要です。"}
+              </div>
             </div>
 
             {/* 定期購入情報は常に表示 */}
@@ -151,7 +156,7 @@ export default function Home() {
             </div>
 
             {/* スコア 左右2列レイアウト */}
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.5rem" }}>
+            <div className="scores-two-col">
               {/* 左列：良い指標 */}
               <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
                 <ScoreBar label="効果の信頼性" score={result.scores.effectiveness} type="positive" icon={Sparkles} />
