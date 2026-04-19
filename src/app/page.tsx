@@ -145,7 +145,7 @@ export default function Home() {
                 <RiskIcon level={result.riskLevel} />
                 総合判定: {result.riskLevel}
               </div>
-              <div style={{ fontSize: "1rem", color: "#475569", textAlign: "center", maxWidth: "700px", lineHeight: "1.7" }}>
+              <div style={{ fontSize: "1rem", color: "#475569", textAlign: "left", maxWidth: "700px", lineHeight: "1.7" }}>
                 {result.riskLevel === "安全" && "口コミの傾向からステマや健康リスクの可能性は低く、比較的信頼できる商品です。ただし効果には個人差がありますので、最終的なご判断はご自身でお願いいたします。"}
                 {result.riskLevel === "注意" && "一部の口コミにステマの傾向や定期縛り・副作用への不安が見られます。購入前にサイトの規約や解約条件をよく確認することをおすすめします。"}
                 {result.riskLevel === "危険" && "ステマの疑いが強い口コミや、健康被害・解約トラブルの報告が多数見られます。購入には十分な注意と慎重な判断が必要です。"}
@@ -265,6 +265,9 @@ export default function Home() {
                 <span style={{ fontWeight: "bold", marginBottom: "0.5rem" }}>スポンサーリンク</span>
                 ※ここにGoogle AdSense等の広告が表示されます
               </div>
+
+              {/* 商品の紹介セクション */}
+              <h2 style={{ fontSize: "1.3rem", fontWeight: "bold", color: "#1e293b", margin: "1.5rem 0 1rem", paddingBottom: "0.5rem", borderBottom: "2px solid #e2e8f0" }}>📦 商品の紹介</h2>
 
               {/* 楽天市場 アフィリエイト検索ボタン */}
               <div style={{ marginTop: "1.5rem" }}>
