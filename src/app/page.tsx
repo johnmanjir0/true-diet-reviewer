@@ -236,6 +236,63 @@ export default function Home() {
               </div>
             )}
 
+            {/* ③ 薬機法違反チェック */}
+            {result.yakukiho && (
+              <div style={{
+                marginTop: "1.5rem",
+                padding: "1.2rem 1.5rem",
+                borderRadius: "12px",
+                background: result.yakukiho.hasViolation ? "#fff1f2" : "#f0fdf4",
+                border: `1px solid ${result.yakukiho.hasViolation ? "#fecdd3" : "#bbf7d0"}`,
+              }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", marginBottom: "0.5rem", fontWeight: "bold", fontSize: "1rem", color: result.yakukiho.hasViolation ? "#be123c" : "#166534" }}>
+                  {result.yakukiho.hasViolation ? <ShieldAlert size={20} /> : <ShieldCheck size={20} />}
+                  【薬機法チェック】{result.yakukiho.hasViolation ? `違反の疑いあり（リスク: ${result.yakukiho.riskLevel}）` : "問題のある表現は見つかりませんでした"}
+                </div>
+                {result.yakukiho.hasViolation && result.yakukiho.violationWords.length > 0 && (
+                  <div style={{ fontSize: "0.9rem", color: "#9f1239" }}>
+                    <p style={{ marginBottom: "0.4rem" }}>疑いのある表現：</p>
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
+                      {result.yakukiho.violationWords.map((word: string, idx: number) => (
+                        <span key={idx} style={{ background: "#fecdd3", padding: "0.2rem 0.8rem", borderRadius: "999px", fontSize: "0.85rem" }}>「{word}」</span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                <p style={{ fontSize: "0.8rem", color: "#64748b", marginTop: "0.6rem" }}>※薬機法（医薬品医療機器等法）により、食品・サプリメントが「痩せる」「脂肪が燃える」などの断定的な効能を謳うことは原則禁止されています。</p>
+              </div>
+            )}
+
+            {/* ② 成分の科学的根拠チェック */}
+            {result.ingredients && result.ingredients.length > 0 && (
+              <div style={{ marginTop: "1.5rem", padding: "1.2rem 1.5rem", borderRadius: "12px", background: "#f8fafc", border: "1px solid #e2e8f0" }}>
+                <h3 style={{ fontSize: "1rem", fontWeight: "bold", color: "#1e293b", marginBottom: "1rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                  🔬 主要成分の科学的根拠チェック
+                </h3>
+                <div style={{ display: "flex", flexDirection: "column", gap: "0.8rem" }}>
+                  {result.ingredients.map((ing: any, idx: number) => (
+                    <div key={idx} style={{ display: "flex", alignItems: "flex-start", gap: "0.8rem" }}>
+                      <span style={{
+                        flexShrink: 0,
+                        padding: "0.2rem 0.7rem",
+                        borderRadius: "999px",
+                        fontSize: "0.8rem",
+                        fontWeight: "bold",
+                        background: ing.evidence === "high" ? "#dcfce7" : ing.evidence === "medium" ? "#fef9c3" : "#fee2e2",
+                        color: ing.evidence === "high" ? "#166534" : ing.evidence === "medium" ? "#854d0e" : "#991b1b",
+                      }}>
+                        {ing.evidence === "high" ? "🟢 根拠あり" : ing.evidence === "medium" ? "🟡 限定的" : "🔴 根拠薄い"}
+                      </span>
+                      <div>
+                        <span style={{ fontWeight: "bold", fontSize: "0.95rem", color: "#1e293b" }}>{ing.name}</span>
+                        <p style={{ fontSize: "0.85rem", color: "#64748b", marginTop: "0.2rem" }}>{ing.note}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* SNSシェアセクション */}
             <div style={{ marginTop: "2rem", padding: "1.5rem", background: "rgba(248,250,252,0.8)", borderRadius: "16px", border: "1px solid var(--border)", textAlign: "center" }}>
               <p style={{ marginBottom: "1rem", fontWeight: "bold", color: "#475569" }}>📣 判定結果をシェアして周りに教えよう！</p>
