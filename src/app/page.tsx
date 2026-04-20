@@ -20,48 +20,59 @@ interface AnalysisResult {
   warningPoints: string[];
   adRatio: number;
   imageUrl?: string;
-  subscriptionRisk?: {
-    hasSubscription: boolean;
-    notes: string;
-  };
+  subscriptionRisk?: { hasSubscription: boolean; notes: string; };
+  yakukiho?: { hasViolation: boolean; violationWords: string[]; riskLevel: string; };
+  ingredients?: { name: string; evidence: string; note: string; }[];
 }
 
 export default function Home() {
+  const [mode, setMode] = useState<"single" | "compare">("single");
   const [query, setQuery] = useState("");
+  const [compareQuery, setCompareQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<AnalysisResult | null>(null);
+  const [compareResult, setCompareResult] = useState<AnalysisResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [rakutenItems, setRakutenItems] = useState<any[]>([]);
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!query.trim()) return;
+    if (mode === "compare" && !compareQuery.trim()) return;
 
     setLoading(true);
     setResult(null);
+    setCompareResult(null);
     setError(null);
     setRakutenItems([]);
 
     try {
-      // Gemini解析と楽天商品検索を並行実行
-      const [analysisResponse, rakutenResponse] = await Promise.all([
-        fetch("/api/analyze", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ productName: query }),
-        }),
-        fetch(`/api/rakuten?keyword=${encodeURIComponent(query)}`),
-      ]);
-
-      const data = await analysisResponse.json();
-      if (!analysisResponse.ok) {
-        throw new Error(data.error || "情報の取得に失敗しました。");
-      }
-      setResult(data);
-
-      const rakutenData = await rakutenResponse.json();
-      if (rakutenData.items) {
-        setRakutenItems(rakutenData.items);
+      if (mode === "compare") {
+        // 2商品を並行解析
+        const [res1, res2] = await Promise.all([
+          fetch("/api/analyze", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ productName: query }) }),
+          fetch("/api/analyze", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ productName: compareQuery }) }),
+        ]);
+        const [data1, data2] = await Promise.all([res1.json(), res2.json()]);
+        if (!res1.ok) throw new Error(data1.error || "商品Aの取得に失敗しました。");
+        if (!res2.ok) throw new Error(data2.error || "商品Bの取得に失敗しました。");
+        setResult(data1);
+        setCompareResult(data2);
+      } else {
+        // 単品解析
+        const [analysisResponse, rakutenResponse] = await Promise.all([
+          fetch("/api/analyze", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ productName: query }),
+          }),
+          fetch(`/api/rakuten?keyword=${encodeURIComponent(query)}`),
+        ]);
+        const data = await analysisResponse.json();
+        if (!analysisResponse.ok) throw new Error(data.error || "情報の取得に失敗しました。");
+        setResult(data);
+        const rakutenData = await rakutenResponse.json();
+        if (rakutenData.items) setRakutenItems(rakutenData.items);
       }
     } catch (err: any) {
       setError(err.message);
@@ -116,24 +127,115 @@ export default function Home() {
           </p>
         </div>
 
-        <form className="search-form" onSubmit={handleSearch}>
-          <input
-            type="text"
-            className="search-input"
-            placeholder="ダイエット商品名を入力（例：〇〇サプリ）"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            disabled={loading}
-          />
-          <button type="submit" className="search-button" disabled={loading || !query.trim()}>
+        {/* モード切替タブ */}
+        <div style={{ display: "flex", gap: "0.5rem", marginBottom: "1.2rem" }}>
+          <button
+            type="button"
+            onClick={() => setMode("single")}
+            style={{ flex: 1, padding: "0.7rem", borderRadius: "10px", border: "none", cursor: "pointer", fontWeight: "bold", fontSize: "0.95rem", background: mode === "single" ? "var(--primary)" : "#e2e8f0", color: mode === "single" ? "#fff" : "#475569", transition: "all 0.2s" }}
+          >
+            🔍 単品調査
+          </button>
+          <button
+            type="button"
+            onClick={() => setMode("compare")}
+            style={{ flex: 1, padding: "0.7rem", borderRadius: "10px", border: "none", cursor: "pointer", fontWeight: "bold", fontSize: "0.95rem", background: mode === "compare" ? "var(--primary)" : "#e2e8f0", color: mode === "compare" ? "#fff" : "#475569", transition: "all 0.2s" }}
+          >
+            ⚖️ 商品比較
+          </button>
+        </div>
+
+        <form className="search-form" onSubmit={handleSearch} style={{ flexDirection: "column", gap: "0.8rem" }}>
+          <div style={{ display: "flex", gap: "0.8rem", width: "100%", flexWrap: "wrap" }}>
+            <input
+              type="text"
+              className="search-input"
+              placeholder={mode === "compare" ? "商品A（例：ナイシトール）" : "ダイエット商品名を入力（例：〇〇サプリ）"}
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              disabled={loading}
+              style={{ flex: 1, minWidth: "200px" }}
+            />
+            {mode === "compare" && (
+              <input
+                type="text"
+                className="search-input"
+                placeholder="商品B（例：メタバリア）"
+                value={compareQuery}
+                onChange={(e) => setCompareQuery(e.target.value)}
+                disabled={loading}
+                style={{ flex: 1, minWidth: "200px" }}
+              />
+            )}
+          </div>
+          <button type="submit" className="search-button" disabled={loading || !query.trim() || (mode === "compare" && !compareQuery.trim())}>
             {loading ? <Search className="spinner" /> : <Search />}
-            {loading ? "分析中..." : "解析する"}
+            {loading ? "分析中..." : mode === "compare" ? "2商品を比較解析する" : "解析する"}
           </button>
         </form>
 
         {error && (
           <div style={{ background: "#fef2f2", color: "#b91c1c", padding: "1rem", borderRadius: "12px", border: "1px solid #fecaca", marginTop: "1rem" }}>
             {error}
+          </div>
+        )}
+
+        {/* ① 比較結果テーブル */}
+        {result && compareResult && mode === "compare" && (
+          <div className="result-container" style={{ marginTop: "2rem" }}>
+            <h2 style={{ fontSize: "1.3rem", fontWeight: "bold", color: "#1e293b", marginBottom: "1.5rem", textAlign: "center" }}>⚖️ 商品比較結果</h2>
+            <div style={{ overflowX: "auto" }}>
+              <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.95rem" }}>
+                <thead>
+                  <tr style={{ background: "#f1f5f9" }}>
+                    <th style={{ padding: "0.8rem 1rem", textAlign: "left", borderBottom: "2px solid #e2e8f0", color: "#475569" }}>項目</th>
+                    <th style={{ padding: "0.8rem 1rem", textAlign: "center", borderBottom: "2px solid #e2e8f0", color: "#0ea5e9", fontWeight: "bold" }}>🅐 {result.productName}</th>
+                    <th style={{ padding: "0.8rem 1rem", textAlign: "center", borderBottom: "2px solid #e2e8f0", color: "#8b5cf6", fontWeight: "bold" }}>🅑 {compareResult.productName}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    { label: "総合判定", aVal: result.riskLevel, bVal: compareResult.riskLevel, isRisk: true },
+                    { label: "ステマ危険度", aVal: result.scores.stemaRisk, bVal: compareResult.scores.stemaRisk, unit: "/100", lowerIsBetter: true },
+                    { label: "効果の信頼性", aVal: result.scores.effectiveness, bVal: compareResult.scores.effectiveness, unit: "/100" },
+                    { label: "コスパ満足度", aVal: result.scores.costPerformance, bVal: compareResult.scores.costPerformance, unit: "/100" },
+                    { label: "副作用・健康リスク", aVal: result.scores.healthRisk, bVal: compareResult.scores.healthRisk, unit: "/100", lowerIsBetter: true },
+                    { label: "継続のしやすさ", aVal: result.scores.continuation, bVal: compareResult.scores.continuation, unit: "/100" },
+                    { label: "広告率（推定）", aVal: result.adRatio, bVal: compareResult.adRatio, unit: "%", lowerIsBetter: true },
+                    { label: "定期購入", aVal: result.subscriptionRisk?.hasSubscription ? "⚠️ あり" : "✅ 不明/なし", bVal: compareResult.subscriptionRisk?.hasSubscription ? "⚠️ あり" : "✅ 不明/なし" },
+                  ].map((row, idx) => {
+                    const aNum = typeof row.aVal === "number" ? row.aVal : null;
+                    const bNum = typeof row.bVal === "number" ? row.bVal : null;
+                    const aWins = aNum !== null && bNum !== null && (row.lowerIsBetter ? aNum < bNum : aNum > bNum);
+                    const bWins = aNum !== null && bNum !== null && (row.lowerIsBetter ? bNum < aNum : bNum > aNum);
+                    return (
+                      <tr key={idx} style={{ borderBottom: "1px solid #e2e8f0", background: idx % 2 === 0 ? "#fff" : "#f8fafc" }}>
+                        <td style={{ padding: "0.7rem 1rem", fontWeight: "bold", color: "#475569" }}>{row.label}</td>
+                        <td style={{ padding: "0.7rem 1rem", textAlign: "center", fontWeight: aWins ? "bold" : "normal", color: aWins ? "#0ea5e9" : "#334155", background: aWins ? "rgba(14,165,233,0.08)" : "transparent" }}>
+                          {row.aVal}{row.unit || ""}  {aWins && "👑"}
+                        </td>
+                        <td style={{ padding: "0.7rem 1rem", textAlign: "center", fontWeight: bWins ? "bold" : "normal", color: bWins ? "#8b5cf6" : "#334155", background: bWins ? "rgba(139,92,246,0.08)" : "transparent" }}>
+                          {row.bVal}{row.unit || ""}  {bWins && "👑"}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+            {/* AI総評 */}
+            <div style={{ marginTop: "1.5rem", padding: "1.2rem", background: "rgba(14,165,233,0.06)", border: "1px solid rgba(14,165,233,0.2)", borderRadius: "12px" }}>
+              <p style={{ fontWeight: "bold", marginBottom: "0.5rem" }}>🤖 AI総評</p>
+              <p style={{ fontSize: "0.95rem", color: "#334155", lineHeight: "1.7" }}>
+                {(() => {
+                  const aScore = result.scores.effectiveness + result.scores.costPerformance + result.scores.continuation - result.scores.stemaRisk - result.scores.healthRisk;
+                  const bScore = compareResult.scores.effectiveness + compareResult.scores.costPerformance + compareResult.scores.continuation - compareResult.scores.stemaRisk - compareResult.scores.healthRisk;
+                  const winner = aScore > bScore ? result.productName : compareResult.productName;
+                  const loser = aScore > bScore ? compareResult.productName : result.productName;
+                  return `総合スコアの比較では「${winner}」の方が信頼性・コスパ・継続しやすさなどで優れており、購入候補としてはこちらがおすすめです。「${loser}」はステマや健康リスクの面で相対的に注意が必要です。最終的なご判断は、ご自身でご確認ください。`;
+                })()}
+              </p>
+            </div>
           </div>
         )}
 
