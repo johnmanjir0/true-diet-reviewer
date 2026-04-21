@@ -40,13 +40,13 @@ export async function POST(req: NextRequest) {
     }
 
     const prompt = `
-以下のダイエット商品の情報を解析し、JSON形式で返してください。Markdown装飾は不要です。
+以下のダイエット商品の情報を解析し、JSON形式で返してください。
 【対象商品】
 ${productName}
-【検索結果】
+【検索結果の断片】
 ${searchContext}
 
-【出力形式】
+必ず有効なJSONオブジェクトのみを出力してください。形式は以下の通りです：
 {
   "productName": "${productName}",
   "riskLevel": "安全" | "要注意" | "危険",
@@ -67,8 +67,8 @@ ${searchContext}
     // 試行するモデルのリスト
     const MODELS = [
       'gemini-1.5-flash',
-      'gemini-flash-latest',
       'gemini-2.0-flash',
+      'gemini-flash-latest',
       'gemini-pro-latest'
     ];
 
@@ -78,14 +78,17 @@ ${searchContext}
     for (const model of MODELS) {
       try {
         console.log(`[Analyze] Fetching from Google API using model: ${model}`);
-        const geminiUrl = `https://generativelanguage.googleapis.com/v1/models/${model}:generateContent?key=${apiKey}`;
+        // v1beta を使用し、camelCase のパラメータを適用
+        const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
         
         const geminiRes = await fetch(geminiUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             contents: [{ parts: [{ text: prompt }] }],
-            generationConfig: { response_mime_type: "application/json" }
+            generationConfig: {
+              responseMimeType: "application/json"
+            }
           })
         });
 
