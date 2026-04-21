@@ -3,7 +3,6 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 import * as cheerio from 'cheerio';
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-const genAI = new GoogleGenerativeAI(GEMINI_API_KEY || '');
 
 export async function POST(req: NextRequest) {
   try {
@@ -18,103 +17,97 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'サーバーのGemini APIキー設定が不足しています。' }, { status: 500 });
     }
 
-    // 1. Yahooウェブ検索にて口コミを収集
-    const searchQuery = `${productName} 口コミ OR 嘘 OR 痩せない OR ステマ OR 解約`;
+    // APIキーをトリム（余計な空白を除去）
+    const genAI = new GoogleGenerativeAI(GEMINI_API_KEY.trim());
+
+    // 1. Yahooウェブ検索にて口コミを収集（軽量化）
+    const searchQuery = `${productName} 口コミ OR ステマ OR 効果`;
     const searchUrl = `https://search.yahoo.co.jp/search?p=${encodeURIComponent(searchQuery)}`;
     const headers = { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36" };
 
     const searchResponse = await fetch(searchUrl, { headers });
-    if (!searchResponse.ok) {
-       return NextResponse.json({ error: '検索エンジンへのアクセスに失敗しました。時間をおいて再試行してください。' }, { status: 500 });
+    let searchContext = "";
+    if (searchResponse.ok) {
+       const html = await searchResponse.text();
+       const $ = cheerio.load(html);
+       const snippets: string[] = [];
+       $('.sw-CardContent').each((_, el) => {
+         snippets.push($(el).text().trim());
+       });
+       searchContext = snippets.slice(0, 5).join('\n\n'); // コンテキストを半分に削減
     }
 
-    const html = await searchResponse.text();
-    const $ = cheerio.load(html);
-    const snippets: string[] = [];
-    $('.sw-CardContent').each((_, el) => {
-      snippets.push($(el).text().trim());
-    });
-    const searchContext = snippets.slice(0, 10).join('\n\n');
-
     const prompt = `
-以下のダイエット商品の基本情報と検索結果の断片をもとに、客観的な判定を行ってください。
-必ず有効なJSON形式で出力してください。
-
+以下のダイエット商品の情報を解析し、JSON形式で返してください。
 【対象商品】
 ${productName}
-
-【検索結果のコンテキスト】
+【検索結果】
 ${searchContext}
 
 【出力形式】
+JSONのみを出力してください（Markdown装飾なし）。
 {
-  "productName": "商品名",
+  "productName": "${productName}",
   "riskLevel": "安全" | "要注意" | "危険",
-  "scores": {
-    "stemaRisk": 0-100,
-    "effectiveness": 0-100,
-    "costPerformance": 0-100,
-    "continuation": 0-100,
-    "healthRisk": 0-100
-  },
-  "verdict": "判定の結論（100文字程度）",
-  "description": "総合判定の下に表示する、ユーザーが取るべき行動やアドバイス（左寄せ、150文字程度）",
-  "prosSummary": ["メリット1", "メリット2"],
-  "consSummary": ["デメリット1", "デメリット2"],
-  "subscriptionRisk": {
-    "hasSubscription": boolean,
-    "detail": "定期購入に関する詳細（例：4回の回数縛りあり、初回のみ解約可など）"
-  },
-  "yakukiho": {
-    "hasViolation": boolean,
-    "riskLevel": "高" | "中" | "低",
-    "violationWords": ["具体的な違反ワード1", "2"],
-    "advice": "広告や口コミを見る際の注意点"
-  },
-  "ingredients": [
-    { "name": "成分名", "evidence": "high" | "medium" | "low", "note": "その成分の効果に関する短い解説" }
-  ],
-  "imageUrl": "商品画像のURL（検索結果から推測されるものがあれば）"
+  "scores": { "stemaRisk": 0-100, "effectiveness": 0-100, "costPerformance": 0-100, "continuation": 0-100, "healthRisk": 0-100 },
+  "verdict": "判定の結論",
+  "description": "ユーザーへのアドバイス",
+  "prosSummary": [],
+  "consSummary": [],
+  "subscriptionRisk": { "hasSubscription": boolean, "detail": "" },
+  "yakukiho": { "hasViolation": boolean, "riskLevel": "高"| "中"| "低", "violationWords": [], "advice": "" },
+  "ingredients": [{ "name": "", "evidence": "high"|"medium"|"low", "note": "" }],
+  "imageUrl": ""
 }
     `;
 
+    // 404エラー対策：利用可能なモデルを順番に試す
     const MODELS_TO_TRY = [
-      'gemini-1.5-flash',
-      'gemini-1.5-pro',
-      'gemini-2.0-flash-exp'
+      { name: 'gemini-1.5-flash', version: 'v1' },
+      { name: 'gemini-1.5-flash-latest', version: 'v1' },
+      { name: 'gemini-1.5-pro', version: 'v1' },
+      { name: 'gemini-2.0-flash-exp', version: 'v1beta' }
     ];
-    let responseText = '';
-    let lastError: any = null;
 
-    for (const modelName of MODELS_TO_TRY) {
+    let responseText = '';
+    let lastErrorMsg = '';
+
+    for (const modelInfo of MODELS_TO_TRY) {
       try {
-        console.log(`Trying model: ${modelName}`);
-        // v1betaでの404回避のため、安定版のv1を明示的に指定（expモデル以外）
-        const apiVersion = modelName.includes('exp') ? 'v1beta' : 'v1';
-        const model = genAI.getGenerativeModel({ model: modelName }, { apiVersion });
+        console.log(`[Analyze] Trying ${modelInfo.name} (${modelInfo.version})...`);
+        const model = genAI.getGenerativeModel(
+          { model: modelInfo.name },
+          { apiVersion: modelInfo.version as any }
+        );
         
         const result = await model.generateContent(prompt);
-        responseText = result.response.text();
+        const response = await result.response;
+        responseText = response.text();
+        
         if (responseText) {
-          console.log(`Success with model: ${modelName}`);
+          console.log(`[Analyze] Success with ${modelInfo.name}`);
           break;
         }
       } catch (e: any) {
-        lastError = e;
-        console.error(`Model ${modelName} failed:`, e.status, e.message);
-        // 次のモデルへ
+        lastErrorMsg = e.message;
+        console.warn(`[Analyze] ${modelInfo.name} failed: ${e.message}`);
+        // 429 (Rate Limit) なら少し待つ
+        if (e.message?.includes('429')) {
+             await new Promise(resolve => setTimeout(resolve, 1000));
+        }
+        continue;
       }
     }
 
     if (!responseText) {
-      console.error('All models failed. Last error:', lastError?.message);
+      console.error('[Analyze] All models failed. Last error:', lastErrorMsg);
       return NextResponse.json({ 
-        error: 'AIモデルが現在混み合っているか、アクセスできません。時間を置いて再度お試しください。',
-        details: lastError?.message 
+        error: 'AI解析サービスへ接続できませんでした。',
+        details: lastErrorMsg
       }, { status: 503 });
     }
 
-    // JSONの抽出（Markdownのデコレーションを除去）
+    // JSONの抽出
     const jsonMatch = responseText.match(/\{[\s\S]*\}/);
     const jsonStr = jsonMatch ? jsonMatch[0] : responseText;
     const data = JSON.parse(jsonStr);
@@ -122,7 +115,7 @@ ${searchContext}
     return NextResponse.json(data);
 
   } catch (error: any) {
-    console.error('Analysis error:', error);
-    return NextResponse.json({ error: '解析中にエラーが発生しました。', details: error.message }, { status: 500 });
+    console.error('Final Analysis error:', error);
+    return NextResponse.json({ error: 'システム内部エラーが発生しました。', details: error.message }, { status: 500 });
   }
 }
