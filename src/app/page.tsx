@@ -14,15 +14,15 @@ interface Scores {
 interface AnalysisResult {
   productName: string;
   scores: Scores;
-  riskLevel: "安全" | "注意" | "危険";
+  riskLevel: "安全" | "要注意" | "危険";
+  verdict: string;
+  description: string;
   prosSummary: string[];
   consSummary: string[];
-  warningPoints: string[];
-  adRatio: number;
-  imageUrl?: string;
-  subscriptionRisk?: { hasSubscription: boolean; notes: string; };
-  yakukiho?: { hasViolation: boolean; violationWords: string[]; riskLevel: string; };
+  subscriptionRisk?: { hasSubscription: boolean; detail: string; };
+  yakukiho?: { hasViolation: boolean; violationWords: string[]; riskLevel: string; advice: string; };
   ingredients?: { name: string; evidence: string; note: string; }[];
+  imageUrl?: string;
 }
 
 export default function Home() {
@@ -31,12 +31,9 @@ export default function Home() {
     : null;
   const initialQuery = searchParams?.get('q') || '';
 
-  const [mode, setMode] = useState<"single" | "compare">("single");
   const [query, setQuery] = useState(initialQuery);
-  const [compareQuery, setCompareQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<AnalysisResult | null>(null);
-  const [compareResult, setCompareResult] = useState<AnalysisResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [rakutenItems, setRakutenItems] = useState<any[]>([]);
 
@@ -52,73 +49,27 @@ export default function Home() {
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!query.trim()) return;
-    if (mode === "compare" && !compareQuery.trim()) return;
 
     setLoading(true);
     setResult(null);
-    setCompareResult(null);
     setError(null);
     setRakutenItems([]);
 
     try {
-      if (mode === "compare") {
-        // 2商品を並行解析
-        const [res1, res2] = await Promise.all([
-          fetch("/api/analyze", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ productName: query }) }),
-          fetch("/api/analyze", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ productName: compareQuery }) }),
-      if (mode === "single") {
-        const res = await fetch("/api/analyze", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ productName: query }),
-        });
-        const data = await res.json();
-        if (data.error) throw new Error(data.error);
-        setResult(data);
-        
-        // 楽天検索
-        const rakutenRes = await fetch(`/api/rakuten?keyword=${encodeURIComponent(query)}`);
-        const rakutenData = await rakutenRes.json();
-        if (rakutenData.items) {
-           setRakutenItems(rakutenData.items);
-        }
-      } else {
-        // 比較モード：安定のため1つずつ解析（逐次解析）
-        if (!compareQuery.trim()) {
-           throw new Error("比較対象の商品名を入力してください。");
-        }
-
-        // 商品1の解析
-        const res1 = await fetch("/api/analyze", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ productName: query }),
-        });
-        const data1 = await res1.json();
-        if (data1.error) throw new Error(`${query}: ${data1.error}`);
-        setCompareResult1(data1);
-
-        // APIの負荷軽減のために1秒待機
-        await new Promise(resolve => setTimeout(resolve, 1000));
-
-        // 商品2の解析
-        const res2 = await fetch("/api/analyze", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ productName: compareQuery }),
-        });
-        const data2 = await res2.json();
-        if (data2.error) throw new Error(`${compareQuery}: ${data2.error}`);
-        setCompareResult2(data2);
-
-        // 総評の生成
-        const versusRes = await fetch("/api/compare", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ result1: data1, result2: data2 }),
-        });
-        const versusData = await versusRes.json();
-        setVersusVerdict(versusData.verdict);
+      const res = await fetch("/api/analyze", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ productName: query }),
+      });
+      const data = await res.json();
+      if (data.error) throw new Error(data.error);
+      setResult(data);
+      
+      // 楽天検索
+      const rakutenRes = await fetch(`/api/rakuten?keyword=${encodeURIComponent(query)}`);
+      const rakutenData = await rakutenRes.json();
+      if (rakutenData.Items) {
+         setRakutenItems(rakutenData.Items);
       }
     } catch (err: any) {
       setError(err.message);
@@ -155,263 +106,102 @@ export default function Home() {
     <main className="container">
       <div className="glass-panel" style={{ marginTop: "2rem" }}>
         <h1 className="title">TrueDiet Reviewer</h1>
-        <p className="subtitle" style={{ marginBottom: "1rem" }}>AIによる多角的ステマ・口コミ判定ツール</p>
+        <p className="subtitle" style={{ marginBottom: "1rem" }}>AIによるダイエット商品のステマ・口コミ判定</p>
 
         {/* サイト説明文（SEO兼ねた紹介文） */}
-        <div style={{ background: "rgba(14,165,233,0.06)", border: "1px solid rgba(14,165,233,0.2)", borderRadius: "16px", padding: "1.5rem", marginBottom: "1.5rem", lineHeight: "1.8", color: "#334155", fontSize: "0.95rem" }}>
+        <div style={{ background: "rgba(14,165,233,0.06)", border: "1px solid rgba(14,165,233,0.2)", borderRadius: "16px", padding: "1.5rem", marginBottom: "2rem", lineHeight: "1.8", color: "#334155", fontSize: "0.95rem" }}>
           <p style={{ marginBottom: "0.8rem" }}>
-            「このダイエットサプリ、本当に効くの？」「口コミが良すぎて逆に怪しい…」
-            そんな疑問をお持ちの方のために作られた、<strong>AIが口コミをリアルタイム解析して本音を暴くツール</strong>です。
-          </p>
-          <p style={{ marginBottom: "0.8rem" }}>
-            商品名を入力するだけで、WEB上の口コミ・レビューをAIが自動収集し、
-            <strong>「ステマ危険度」「効果の信頼性」「コスパ」「健康リスク」「定期縛りの有無」</strong>など
-            6つの視点で徹底分析します。高額なダイエット商品の購入前に、ぜひ一度ご活用ください。
+            この商品は本当に信じていいの？WEB上の口コミをAIがリアルタイム解析し、本音を暴きます。
           </p>
           <p style={{ fontSize: "0.85rem", color: "#64748b" }}>
-            ※ステマ（ステルスマーケティング）とは：企業から報酬をもらいながら、一般客を装って商品を絶賛する「サクラ口コミ」のことです。
+            ※ステマ危険度、成分の根拠、薬機法違反、定期縛りなどを徹底分析します。
           </p>
-        </div>
-
-        {/* モード切替タブ */}
-        <div style={{ display: "flex", gap: "0.5rem", marginBottom: "1.2rem" }}>
-          <button
-            type="button"
-            onClick={() => setMode("single")}
-            style={{ flex: 1, padding: "0.7rem", borderRadius: "10px", border: "none", cursor: "pointer", fontWeight: "bold", fontSize: "0.95rem", background: mode === "single" ? "var(--primary)" : "#e2e8f0", color: mode === "single" ? "#fff" : "#475569", transition: "all 0.2s" }}
-          >
-            🔍 単品調査
-          </button>
-          <button
-            type="button"
-            onClick={() => setMode("compare")}
-            style={{ flex: 1, padding: "0.7rem", borderRadius: "10px", border: "none", cursor: "pointer", fontWeight: "bold", fontSize: "0.95rem", background: mode === "compare" ? "var(--primary)" : "#e2e8f0", color: mode === "compare" ? "#fff" : "#475569", transition: "all 0.2s" }}
-          >
-            ⚖️ 商品比較
-          </button>
         </div>
 
         <form className="search-form" onSubmit={handleSearch} style={{ flexDirection: "column", gap: "0.8rem" }}>
-          <div style={{ display: "flex", gap: "0.8rem", width: "100%", flexWrap: "wrap" }}>
-            <input
-              type="text"
-              className="search-input"
-              placeholder={mode === "compare" ? "商品A（例：ナイシトール）" : "ダイエット商品名を入力（例：〇〇サプリ）"}
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              disabled={loading}
-              style={{ flex: 1, minWidth: "200px" }}
-            />
-            {mode === "compare" && (
+          <div style={{ display: "flex", width: "100%", gap: "0.5rem" }}>
+            <div style={{ position: "relative", flex: 1 }}>
+              <Search className="search-icon" size={20} />
               <input
                 type="text"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="商品名を入力（例：ナイシトール）"
                 className="search-input"
-                placeholder="商品B（例：メタバリア）"
-                value={compareQuery}
-                onChange={(e) => setCompareQuery(e.target.value)}
-                disabled={loading}
-                style={{ flex: 1, minWidth: "200px" }}
               />
-            )}
+            </div>
+            <button type="submit" disabled={loading} className="search-button">
+              {loading ? "解析中..." : "解析する"}
+            </button>
           </div>
-          <button type="submit" className="search-button" disabled={loading || !query.trim() || (mode === "compare" && !compareQuery.trim())}>
-            {loading ? <Search className="spinner" /> : <Search />}
-            {loading ? "分析中..." : mode === "compare" ? "2商品を比較解析する" : "解析する"}
-          </button>
         </form>
 
-        {error && (
-          <div style={{ background: "#fef2f2", color: "#b91c1c", padding: "1rem", borderRadius: "12px", border: "1px solid #fecaca", marginTop: "1rem" }}>
-            {error}
-          </div>
-        )}
-
-        {/* ① 比較結果テーブル */}
-        {result && compareResult && mode === "compare" && (
-          <div className="result-container" style={{ marginTop: "2rem" }}>
-            <h2 style={{ fontSize: "1.3rem", fontWeight: "bold", color: "#1e293b", marginBottom: "1.5rem", textAlign: "center" }}>⚖️ 商品比較結果</h2>
-            <div style={{ overflowX: "auto" }}>
-              <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.95rem" }}>
-                <thead>
-                  <tr style={{ background: "#f1f5f9" }}>
-                    <th style={{ padding: "0.8rem 1rem", textAlign: "left", borderBottom: "2px solid #e2e8f0", color: "#475569" }}>項目</th>
-                    <th style={{ padding: "0.8rem 1rem", textAlign: "center", borderBottom: "2px solid #e2e8f0", color: "#0ea5e9", fontWeight: "bold" }}>🅐 {result.productName}</th>
-                    <th style={{ padding: "0.8rem 1rem", textAlign: "center", borderBottom: "2px solid #e2e8f0", color: "#8b5cf6", fontWeight: "bold" }}>🅑 {compareResult.productName}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {[
-                    { label: "総合判定", aVal: result.riskLevel, bVal: compareResult.riskLevel, isRisk: true },
-                    { label: "ステマ危険度", aVal: result.scores.stemaRisk, bVal: compareResult.scores.stemaRisk, unit: "/100", lowerIsBetter: true },
-                    { label: "効果の信頼性", aVal: result.scores.effectiveness, bVal: compareResult.scores.effectiveness, unit: "/100" },
-                    { label: "コスパ満足度", aVal: result.scores.costPerformance, bVal: compareResult.scores.costPerformance, unit: "/100" },
-                    { label: "副作用・健康リスク", aVal: result.scores.healthRisk, bVal: compareResult.scores.healthRisk, unit: "/100", lowerIsBetter: true },
-                    { label: "継続のしやすさ", aVal: result.scores.continuation, bVal: compareResult.scores.continuation, unit: "/100" },
-                    { label: "広告率（推定）", aVal: result.adRatio, bVal: compareResult.adRatio, unit: "%", lowerIsBetter: true },
-                    { label: "定期購入", aVal: result.subscriptionRisk?.hasSubscription ? "⚠️ あり" : "✅ 不明/なし", bVal: compareResult.subscriptionRisk?.hasSubscription ? "⚠️ あり" : "✅ 不明/なし" },
-                  ].map((row, idx) => {
-                    const aNum = typeof row.aVal === "number" ? row.aVal : null;
-                    const bNum = typeof row.bVal === "number" ? row.bVal : null;
-                    const aWins = aNum !== null && bNum !== null && (row.lowerIsBetter ? aNum < bNum : aNum > bNum);
-                    const bWins = aNum !== null && bNum !== null && (row.lowerIsBetter ? bNum < aNum : bNum > aNum);
-                    return (
-                      <tr key={idx} style={{ borderBottom: "1px solid #e2e8f0", background: idx % 2 === 0 ? "#fff" : "#f8fafc" }}>
-                        <td style={{ padding: "0.7rem 1rem", fontWeight: "bold", color: "#475569" }}>{row.label}</td>
-                        <td style={{ padding: "0.7rem 1rem", textAlign: "center", fontWeight: aWins ? "bold" : "normal", color: aWins ? "#0ea5e9" : "#334155", background: aWins ? "rgba(14,165,233,0.08)" : "transparent" }}>
-                          {row.aVal}{row.unit || ""}  {aWins && "👑"}
-                        </td>
-                        <td style={{ padding: "0.7rem 1rem", textAlign: "center", fontWeight: bWins ? "bold" : "normal", color: bWins ? "#8b5cf6" : "#334155", background: bWins ? "rgba(139,92,246,0.08)" : "transparent" }}>
-                          {row.bVal}{row.unit || ""}  {bWins && "👑"}
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-            {/* AI総評 */}
-            <div style={{ marginTop: "1.5rem", padding: "1.2rem", background: "rgba(14,165,233,0.06)", border: "1px solid rgba(14,165,233,0.2)", borderRadius: "12px" }}>
-              <p style={{ fontWeight: "bold", marginBottom: "0.5rem" }}>🤖 AI総評</p>
-              <p style={{ fontSize: "0.95rem", color: "#334155", lineHeight: "1.7" }}>
-                {(() => {
-                  const aScore = result.scores.effectiveness + result.scores.costPerformance + result.scores.continuation - result.scores.stemaRisk - result.scores.healthRisk;
-                  const bScore = compareResult.scores.effectiveness + compareResult.scores.costPerformance + compareResult.scores.continuation - compareResult.scores.stemaRisk - compareResult.scores.healthRisk;
-                  const winner = aScore > bScore ? result.productName : compareResult.productName;
-                  const loser = aScore > bScore ? compareResult.productName : result.productName;
-                  return `総合スコアの比較では「${winner}」の方が信頼性・コスパ・継続しやすさなどで優れており、購入候補としてはこちらがおすすめです。「${loser}」はステマや健康リスクの面で相対的に注意が必要です。最終的なご判断は、ご自身でご確認ください。`;
-                })()}
-              </p>
-            </div>
-          </div>
-        )}
+        {error && <div className="error-message">{error}</div>}
 
         {result && (
-          <div className="result-container">
-            
-            <div className="overall-header">
-              <div className={`risk-badge ${getRiskClass(result.riskLevel)}`}>
+          <div className="result-container animate-fade-in">
+            <div className={`risk-banner ${getRiskClass(result.riskLevel)}`}>
+              <div className="risk-content">
                 <RiskIcon level={result.riskLevel} />
-                総合判定: {result.riskLevel}
-              </div>
-              <div style={{ fontSize: "1rem", color: "#475569", textAlign: "left", maxWidth: "700px", lineHeight: "1.7" }}>
-                {result.riskLevel === "安全" && "口コミの傾向からステマや健康リスクの可能性は低く、比較的信頼できる商品です。ただし効果には個人差がありますので、最終的なご判断はご自身でお願いいたします。"}
-                {result.riskLevel === "注意" && "一部の口コミにステマの傾向や定期縛り・副作用への不安が見られます。購入前にサイトの規約や解約条件をよく確認することをおすすめします。"}
-                {result.riskLevel === "危険" && "ステマの疑いが強い口コミや、健康被害・解約トラブルの報告が多数見られます。購入には十分な注意と慎重な判断が必要です。"}
-              </div>
-            </div>
-
-            {/* 定期購入情報は常に表示 */}
-            <div style={{ padding: "1rem", background: result.subscriptionRisk?.hasSubscription ? "#fffbeb" : "#f0fdf4", border: `1px solid ${result.subscriptionRisk?.hasSubscription ? "#fde68a" : "#bbf7d0"}`, borderRadius: "12px", color: result.subscriptionRisk?.hasSubscription ? "#92400e" : "#166534", marginBottom: "2rem", fontSize: "0.95rem" }}>
-              <strong>
-                {result.subscriptionRisk?.hasSubscription
-                  ? <><AlertTriangle size={18} style={{ display: "inline", verticalAlign: "text-bottom", marginRight: "4px" }}/>【定期購入あり・注意】</>
-                  : <><ShieldCheck size={18} style={{ display: "inline", verticalAlign: "text-bottom", marginRight: "4px" }}/>【定期購入】</>
-                }
-              </strong><br/>
-              {result.subscriptionRisk?.notes || "定期購入に関する情報は見つかりませんでした。"}
-            </div>
-
-            {/* 色の凡例 */}
-            <div style={{ display: "flex", gap: "1.5rem", marginBottom: "1rem", fontSize: "0.85rem", color: "#64748b" }}>
-              <span style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
-                <span style={{ display: "inline-block", width: "24px", height: "10px", borderRadius: "5px", background: "linear-gradient(90deg, #34d399, #10b981)" }}></span>
-                緑＝高いほど良い
-              </span>
-              <span style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
-                <span style={{ display: "inline-block", width: "24px", height: "10px", borderRadius: "5px", background: "linear-gradient(90deg, #fbbf24, #ef4444)" }}></span>
-                赤＝高いほど危険・注意
-              </span>
-            </div>
-
-            {/* スコア 左右2列レイアウト */}
-            <div className="scores-two-col">
-              {/* 左列：良い指標 */}
-              <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-                <ScoreBar label="効果の信頼性" score={result.scores.effectiveness} type="positive" icon={Sparkles} />
-                <ScoreBar label="コスパ満足度" score={result.scores.costPerformance} type="positive" icon={DollarSign} />
-                <ScoreBar label="継続のしやすさ" score={result.scores.continuation} type="positive" icon={Activity} />
-              </div>
-              {/* 右列：リスク指標 */}
-              <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-                <ScoreBar label="ステマ危険度" score={result.scores.stemaRisk} type="negative" icon={ShieldAlert} />
-                <ScoreBar label="アフィリエイト広告率" score={result.adRatio} type="negative" icon={DollarSign} />
-                <ScoreBar label="副作用・健康リスク" score={result.scores.healthRisk} type="negative" icon={HeartPulse} />
-              </div>
-            </div>
-
-            <div className="details-grid">
-              {/* メリット */}
-              <div className="detail-column">
-                <h3 className="pros-title"><ThumbsUp size={24} /> リアルな良い声・メリット</h3>
-                <ul className="real-voice-list">
-                  {result.prosSummary && result.prosSummary.length > 0 ? (
-                    result.prosSummary.map((pro, idx) => (
-                      <li key={idx}><span style={{ color: '#10b981' }}>+</span> <span>{pro}</span></li>
-                    ))
-                  ) : (
-                    <li>見つかりませんでした</li>
-                  )}
-                </ul>
-              </div>
-
-              {/* デメリット */}
-              <div className="detail-column">
-                <h3 className="cons-title"><ThumbsDown size={24} /> リアルな不満点・デメリット</h3>
-                <ul className="real-voice-list">
-                  {result.consSummary && result.consSummary.length > 0 ? (
-                    result.consSummary.map((con, idx) => (
-                      <li key={idx}><span style={{ color: '#ef4444' }}>-</span> <span>{con}</span></li>
-                    ))
-                  ) : (
-                    <li>見つかりませんでした</li>
-                  )}
-                </ul>
-              </div>
-            </div>
-
-            {/* 注意点 */}
-            {result.warningPoints && result.warningPoints.length > 0 && (
-              <div className="warning-section">
-                <h3><AlertTriangle size={24} /> 購入前の注意点</h3>
-                <ul className="warning-list">
-                  {result.warningPoints.map((point, idx) => (
-                    <li key={idx}>
-                      <ShieldAlert size={18} style={{ minWidth: "18px", marginTop: "2px" }} />
-                      <span>{point}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            {/* ③ 薬機法違反チェック */}
-            {result.yakukiho && (
-              <div style={{
-                marginTop: "1.5rem",
-                padding: "1.2rem 1.5rem",
-                borderRadius: "12px",
-                background: result.yakukiho.hasViolation ? "#fff1f2" : "#f0fdf4",
-                border: `1px solid ${result.yakukiho.hasViolation ? "#fecdd3" : "#bbf7d0"}`,
-              }}>
-                <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", marginBottom: "0.5rem", fontWeight: "bold", fontSize: "1rem", color: result.yakukiho.hasViolation ? "#be123c" : "#166534" }}>
-                  {result.yakukiho.hasViolation ? <ShieldAlert size={20} /> : <ShieldCheck size={20} />}
-                  【薬機法チェック】{result.yakukiho.hasViolation ? `違反の疑いあり（リスク: ${result.yakukiho.riskLevel}）` : "問題のある表現は見つかりませんでした"}
+                <div>
+                  <span className="risk-label">総合ステマ危険度</span>
+                  <div className="risk-title">{result.riskLevel}</div>
                 </div>
-                {result.yakukiho.hasViolation && result.yakukiho.violationWords.length > 0 && (
-                  <div style={{ fontSize: "0.9rem", color: "#9f1239" }}>
-                    <p style={{ marginBottom: "0.4rem" }}>疑いのある表現：</p>
-                    <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
-                      {result.yakukiho.violationWords.map((word: string, idx: number) => (
-                        <span key={idx} style={{ background: "#fecdd3", padding: "0.2rem 0.8rem", borderRadius: "999px", fontSize: "0.85rem" }}>「{word}」</span>
-                      ))}
-                    </div>
-                  </div>
-                )}
-                <p style={{ fontSize: "0.8rem", color: "#64748b", marginTop: "0.6rem" }}>※薬機法（医薬品医療機器等法）により、食品・サプリメントが「痩せる」「脂肪が燃える」などの断定的な効能を謳うことは原則禁止されています。</p>
+              </div>
+              <div className="risk-score">{result.scores.stemaRisk}%</div>
+            </div>
+
+            <div className="verdict-card">
+              <h2 className="section-title"><Sparkles size={20} /> AIの結論</h2>
+              <p className="verdict-text">{result.verdict}</p>
+              <div className="verdict-description">{result.description}</div>
+            </div>
+
+            <div className="score-grid">
+              <ScoreBar label="効果の信頼性" score={result.scores.effectiveness} type="positive" icon={Activity} />
+              <ScoreBar label="健康維持リスク" score={result.scores.healthRisk} type="negative" icon={ShieldAlert} />
+              <ScoreBar label="コスパ満足度" score={result.scores.costPerformance} type="positive" icon={DollarSign} />
+              <ScoreBar label="継続のしやすさ" score={result.scores.continuation} type="positive" icon={HeartPulse} />
+            </div>
+
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+              <div className="summary-card pros">
+                <h3><ThumbsUp size={18} /> メリット</h3>
+                <ul>{result.prosSummary.map((s, i) => <li key={i}>{s}</li>)}</ul>
+              </div>
+              <div className="summary-card cons">
+                <h3><ThumbsDown size={18} /> デメリット</h3>
+                <ul>{result.consSummary.map((s, i) => <li key={i}>{s}</li>)}</ul>
+              </div>
+            </div>
+
+            {/* 定期購入リスク */}
+            {result.subscriptionRisk && (
+              <div style={{ marginTop: "1rem", padding: "1.2rem", borderRadius: "12px", background: result.subscriptionRisk.hasSubscription ? "#fff7ed" : "#f0fdf4", border: "1px solid" + (result.subscriptionRisk.hasSubscription ? "#fdba74" : "#bbf7d0") }}>
+                <h3 style={{ fontSize: "1rem", fontWeight: "bold", color: "#1e293b", marginBottom: "0.5rem" }}>
+                  {result.subscriptionRisk.hasSubscription ? "⚠️ 定期購入の注意点" : "✅ 定期縛りなし"}
+                </h3>
+                <p style={{ fontSize: "0.9rem", color: "#475569" }}>{result.subscriptionRisk.detail}</p>
               </div>
             )}
 
-            {/* ② 成分の科学的根拠チェック */}
+            {/* 薬機法チェック */}
+            {result.yakukiho && (
+              <div style={{ marginTop: "1.5rem", padding: "1.2rem", borderRadius: "16px", background: "#fef2f2", border: "1px solid #fee2e2" }}>
+                <h3 style={{ fontSize: "1rem", fontWeight: "bold", color: "#991b1b", marginBottom: "0.8rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                  🚨 薬機法違反の疑いチェック
+                </h3>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", marginBottom: "0.8rem" }}>
+                  {result.yakukiho.violationWords.map((word, idx) => (
+                    <span key={idx} style={{ padding: "0.2rem 0.6rem", background: "#fecaca", color: "#991b1b", borderRadius: "4px", fontSize: "0.85rem", fontWeight: "bold" }}>{word}</span>
+                  ))}
+                  {result.yakukiho.violationWords.length === 0 && <span style={{ color: "#059669" }}>問題のある表現は見つかりませんでした</span>}
+                </div>
+                <p style={{ fontSize: "0.85rem", color: "#7f1d1d", lineHeight: "1.6" }}>{result.yakukiho.advice}</p>
+              </div>
+            )}
+
+            {/* 成分の科学的根拠チェック */}
             {result.ingredients && result.ingredients.length > 0 && (
               <div style={{ marginTop: "1.5rem", padding: "1.2rem 1.5rem", borderRadius: "12px", background: "#f8fafc", border: "1px solid #e2e8f0" }}>
                 <h3 style={{ fontSize: "1rem", fontWeight: "bold", color: "#1e293b", marginBottom: "1rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
@@ -441,7 +231,6 @@ export default function Home() {
               </div>
             )}
 
-            {/* SNSシェアセクション */}
             <div style={{ marginTop: "2rem", padding: "1.5rem", background: "rgba(248,250,252,0.8)", borderRadius: "16px", border: "1px solid var(--border)", textAlign: "center" }}>
               <p style={{ marginBottom: "1rem", fontWeight: "bold", color: "#475569" }}>📣 判定結果をシェアして周りに教えよう！</p>
               <div style={{ display: "flex", gap: "1rem", justifyContent: "center", flexWrap: "wrap" }}>
@@ -449,6 +238,7 @@ export default function Home() {
                   href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`「${result.productName}」のAIステマ判定結果：${result.riskLevel}！\nステマ危険度: ${result.scores.stemaRisk}/100\n効果の信頼性: ${result.scores.effectiveness}/100\nhttps://true-diet-reviewer.vercel.app #ダイエット #ステマ判定 #サプリ`)}`}
                   target="_blank"
                   rel="noopener noreferrer"
+                  className="share-btn twitter"
                   style={{ display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.8rem 1.8rem", borderRadius: "999px", background: "#000", color: "#fff", fontWeight: "bold", textDecoration: "none", fontSize: "0.95rem" }}
                 >
                   𝕏 でシェア
@@ -457,6 +247,7 @@ export default function Home() {
                   href={`https://social-plugins.line.me/lineit/share?url=${encodeURIComponent("https://true-diet-reviewer.vercel.app")}&text=${encodeURIComponent(`「${result.productName}」のステマ判定結果を調べました！`)}` }
                   target="_blank"
                   rel="noopener noreferrer"
+                  className="share-btn line"
                   style={{ display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.8rem 1.8rem", borderRadius: "999px", background: "#06C755", color: "#fff", fontWeight: "bold", textDecoration: "none", fontSize: "0.95rem" }}
                 >
                   LINE でシェア
@@ -464,19 +255,15 @@ export default function Home() {
               </div>
             </div>
 
-            {/* マネタイズセクション */}
             <div className="monetization-section">
               <div className="ad-placeholder">
                 <span style={{ fontWeight: "bold", marginBottom: "0.5rem" }}>スポンサーリンク</span>
                 ※ここにGoogle AdSense等の広告が表示されます
               </div>
 
-              {/* 商品の紹介セクション */}
               <h2 style={{ fontSize: "1.3rem", fontWeight: "bold", color: "#1e293b", margin: "1.5rem 0 1rem", paddingBottom: "0.5rem", borderBottom: "2px solid #e2e8f0" }}>📦 商品の紹介</h2>
 
-              {/* 楽天市場 アフィリエイト検索ボタン */}
               <div style={{ marginTop: "1.5rem" }}>
-                {/* 商品画像カード */}
                 {result.imageUrl && (
                   <div style={{ display: "flex", alignItems: "center", gap: "1.5rem", background: "#fff", border: "1px solid #e2e8f0", borderRadius: "16px", padding: "1.2rem", marginBottom: "0.5rem" }}>
                     <img
@@ -491,14 +278,14 @@ export default function Home() {
                     </div>
                   </div>
                 )}
-                <h3 style={{ fontSize: "1.1rem", fontWeight: "bold", color: "#1e293b", marginBottom: "1rem" }}>🛒 この商品を購入・比較する</h3>
+                <h3 style={{ fontSize: "1.1rem", fontWeight: "bold", color: "#1e293b", marginBottom: "1rem" }}>🛒 この商品を購入・検討する</h3>
                 <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
                   <a
                     href={`https://hb.afl.rakuten.co.jp/ichiba/52f1f988.9bcb825b.52f1f989.d0a8b332/?pc=${encodeURIComponent(`https://search.rakuten.co.jp/search/mall/${result.productName}/`)}&link_type=text`}
                     target="_blank"
                     rel="nofollow sponsored noopener"
                     className="affiliate-btn affiliate-rakuten"
-                    style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem", width: "100%" }}
+                    style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem", width: "100%", padding: "1rem", borderRadius: "12px", background: "#bf0000", color: "#fff", fontWeight: "bold", textDecoration: "none" }}
                   >
                     <ShoppingCart size={18} /> 楽天市場で価格・口コミを見る
                   </a>
@@ -507,15 +294,13 @@ export default function Home() {
                     target="_blank"
                     rel="noopener noreferrer"
                     className="affiliate-btn affiliate-amazon"
-                    style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem", width: "100%" }}
+                    style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem", width: "100%", padding: "1rem", borderRadius: "12px", background: "#ff9900", color: "#fff", fontWeight: "bold", textDecoration: "none" }}
                   >
                     <ShoppingCart size={18} /> Amazonで価格を確認する
                   </a>
                 </div>
               </div>
-
             </div>
-
           </div>
         )}
       </div>

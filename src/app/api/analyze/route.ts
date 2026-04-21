@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { GoogleGenerativeAI } from '@google/generative-ai';
 import * as cheerio from 'cheerio';
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
@@ -17,35 +16,37 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'サーバーのGemini APIキー設定が不足しています。' }, { status: 500 });
     }
 
-    // APIキーをトリム（余計な空白を除去）
-    const genAI = new GoogleGenerativeAI(GEMINI_API_KEY.trim());
-
     // 1. Yahooウェブ検索にて口コミを収集（軽量化）
-    const searchQuery = `${productName} 口コミ OR ステマ OR 効果`;
+    const searchQuery = `${productName} 口コミ OR 評判 OR 効果`;
     const searchUrl = `https://search.yahoo.co.jp/search?p=${encodeURIComponent(searchQuery)}`;
     const headers = { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36" };
 
-    const searchResponse = await fetch(searchUrl, { headers });
-    let searchContext = "";
-    if (searchResponse.ok) {
-       const html = await searchResponse.text();
-       const $ = cheerio.load(html);
-       const snippets: string[] = [];
-       $('.sw-CardContent').each((_, el) => {
-         snippets.push($(el).text().trim());
-       });
-       searchContext = snippets.slice(0, 5).join('\n\n'); // コンテキストを半分に削減
+    let searchContext = "検索結果を取得できませんでした。";
+    try {
+      const searchResponse = await fetch(searchUrl, { headers });
+      if (searchResponse.ok) {
+        const html = await searchResponse.text();
+        const $ = cheerio.load(html);
+        const snippets: string[] = [];
+        $('.sw-CardContent').each((_, el) => {
+          snippets.push($(el).text().trim());
+        });
+        if (snippets.length > 0) {
+          searchContext = snippets.slice(0, 5).join('\n\n');
+        }
+      }
+    } catch (e) {
+      console.warn('Search failed:', e);
     }
 
     const prompt = `
-以下のダイエット商品の情報を解析し、JSON形式で返してください。
+以下のダイエット商品の情報を解析し、JSON形式で返してください。Markdown装飾は不要です。
 【対象商品】
 ${productName}
 【検索結果】
 ${searchContext}
 
 【出力形式】
-JSONのみを出力してください（Markdown装飾なし）。
 {
   "productName": "${productName}",
   "riskLevel": "安全" | "要注意" | "危険",
@@ -61,62 +62,62 @@ JSONのみを出力してください（Markdown装飾なし）。
 }
     `;
 
-    // 404エラー対策：利用可能なモデルを順番に試す
-    // ユーザーのAPIキーで実際に利用可能なモデル名に調整（2026年時点の最新エイリアス）
-    const MODELS_TO_TRY = [
-      { name: 'gemini-flash-latest', version: 'v1' },
-      { name: 'gemini-2.0-flash', version: 'v1' },
-      { name: 'gemini-pro-latest', version: 'v1' },
-      { name: 'gemini-1.5-flash-latest', version: 'v1' }
+    // 安定性を極大化するため、SDKを使わず直接REST APIを叩く
+    const apiKey = GEMINI_API_KEY.trim();
+    // 試行するモデルのリスト
+    const MODELS = [
+      'gemini-1.5-flash',
+      'gemini-flash-latest',
+      'gemini-2.0-flash',
+      'gemini-pro-latest'
     ];
 
-    let responseText = '';
-    let lastErrorMsg = '';
+    let responseData = null;
+    let lastErrorDetails = "";
 
-    for (const modelInfo of MODELS_TO_TRY) {
+    for (const model of MODELS) {
       try {
-        console.log(`[Analyze] Trying ${modelInfo.name} (${modelInfo.version})...`);
-        const model = genAI.getGenerativeModel(
-          { model: modelInfo.name },
-          { apiVersion: modelInfo.version as any }
-        );
+        console.log(`[Analyze] Fetching from Google API using model: ${model}`);
+        const geminiUrl = `https://generativelanguage.googleapis.com/v1/models/${model}:generateContent?key=${apiKey}`;
         
-        const result = await model.generateContent(prompt);
-        const response = await result.response;
-        responseText = response.text();
-        
-        if (responseText) {
-          console.log(`[Analyze] Success with ${modelInfo.name}`);
+        const geminiRes = await fetch(geminiUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: prompt }] }],
+            generationConfig: { response_mime_type: "application/json" }
+          })
+        });
+
+        const resJson = await geminiRes.json();
+
+        if (geminiRes.ok && resJson.candidates?.[0]?.content?.parts?.[0]?.text) {
+          const text = resJson.candidates[0].content.parts[0].text;
+          const jsonMatch = text.match(/\{[\s\S]*\}/);
+          responseData = JSON.parse(jsonMatch ? jsonMatch[0] : text);
+          console.log(`[Analyze] Success with model: ${model}`);
           break;
+        } else {
+          lastErrorDetails = resJson.error?.message || JSON.stringify(resJson);
+          console.warn(`[Analyze] Model ${model} failed: ${lastErrorDetails}`);
         }
       } catch (e: any) {
-        lastErrorMsg = e.message;
-        console.warn(`[Analyze] ${modelInfo.name} failed: ${e.message}`);
-        // 429 (Rate Limit) なら少し待つ
-        if (e.message?.includes('429')) {
-             await new Promise(resolve => setTimeout(resolve, 1000));
-        }
-        continue;
+        lastErrorDetails = e.message;
+        console.error(`[Analyze] Request to ${model} failed:`, e);
       }
     }
 
-    if (!responseText) {
-      console.error('[Analyze] All models failed. Last error:', lastErrorMsg);
+    if (!responseData) {
       return NextResponse.json({ 
-        error: 'AI解析サービスへ接続できませんでした。',
-        details: lastErrorMsg
+        error: 'AI解析サービスとの通信に失敗しました。',
+        details: lastErrorDetails 
       }, { status: 503 });
     }
 
-    // JSONの抽出
-    const jsonMatch = responseText.match(/\{[\s\S]*\}/);
-    const jsonStr = jsonMatch ? jsonMatch[0] : responseText;
-    const data = JSON.parse(jsonStr);
-
-    return NextResponse.json(data);
+    return NextResponse.json(responseData);
 
   } catch (error: any) {
     console.error('Final Analysis error:', error);
-    return NextResponse.json({ error: 'システム内部エラーが発生しました。', details: error.message }, { status: 500 });
+    return NextResponse.json({ error: '解析中にエラーが発生しました。', details: error.message }, { status: 500 });
   }
 }
