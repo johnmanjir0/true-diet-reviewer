@@ -487,10 +487,15 @@ export default function Home() {
           </div>
         )}
       </div>
-      <footer style={{ marginTop: "3rem", textAlign: "left", fontSize: "0.85rem", color: "#94a3b8", padding: "1rem" }}>
+      <footer style={{ marginTop: "3rem", textAlign: "left", fontSize: "0.85rem", color: "#94a3b8", padding: "1rem", borderTop: "1px solid #e2e8f0" }}>
+        <p style={{ marginBottom: "0.5rem" }}>
+          <a href="/privacy" style={{ color: "#64748b", textDecoration: "none", marginRight: "1rem" }}>プライバシーポリシー</a>
+          <a href="/terms" style={{ color: "#64748b", textDecoration: "none" }}>利用規約</a>
+        </p>
         <p><strong>【免責事項】</strong></p>
         <p>当サイトの分析結果は、WEB上に存在する口コミやレビュー情報をAIが自動集約・抽出したものです。事実の正確性や商品の効果を保証するものではありません。</p>
         <p>商品の購入やご利用等に関する最終的なご判断は、ご自身で行っていただきますようお願いいたします。当サイトの利用により生じたいかなる損害についても責任は負いません。</p>
+        <p style={{ marginTop: "1rem", textAlign: "center" }}>© 2026 TrueDiet Reviewer</p>
       </footer>
     </main>
   );

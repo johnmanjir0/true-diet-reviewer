@@ -4,14 +4,8 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const keyword = searchParams.get('keyword') || '';
 
-  // デバッグ用: 環境変数の設定状況を確認
-  if (keyword === 'debug-env') {
-    return NextResponse.json({
-      secretSet: !!process.env.LINE_CHANNEL_SECRET,
-      tokenSet: !!process.env.LINE_CHANNEL_ACCESS_TOKEN,
-      secretLength: process.env.LINE_CHANNEL_SECRET?.length || 0,
-      tokenLength: process.env.LINE_CHANNEL_ACCESS_TOKEN?.length || 0,
-    });
+  if (!keyword) {
+    return NextResponse.json({ error: 'keyword is required' }, { status: 400 });
   }
 
   const appId = process.env.RAKUTEN_APP_ID;
