@@ -63,10 +63,10 @@ JSONのみを出力してください（Markdown装飾なし）。
 
     // 404エラー対策：利用可能なモデルを順番に試す
     const MODELS_TO_TRY = [
-      { name: 'gemini-1.5-flash', version: 'v1' },
       { name: 'gemini-1.5-flash-latest', version: 'v1' },
-      { name: 'gemini-1.5-pro', version: 'v1' },
-      { name: 'gemini-2.0-flash-exp', version: 'v1beta' }
+      { name: 'gemini-1.5-flash', version: 'v1' },
+      { name: 'gemini-1.5-pro-latest', version: 'v1' },
+      { name: 'gemini-1.5-pro', version: 'v1' }
     ];
 
     let responseText = '';

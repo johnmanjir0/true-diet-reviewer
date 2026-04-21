@@ -66,27 +66,59 @@ export default function Home() {
         const [res1, res2] = await Promise.all([
           fetch("/api/analyze", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ productName: query }) }),
           fetch("/api/analyze", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ productName: compareQuery }) }),
-        ]);
-        const [data1, data2] = await Promise.all([res1.json(), res2.json()]);
-        if (!res1.ok) throw new Error(data1.error || "商品Aの取得に失敗しました。");
-        if (!res2.ok) throw new Error(data2.error || "商品Bの取得に失敗しました。");
-        setResult(data1);
-        setCompareResult(data2);
-      } else {
-        // 単品解析
-        const [analysisResponse, rakutenResponse] = await Promise.all([
-          fetch("/api/analyze", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ productName: query }),
-          }),
-          fetch(`/api/rakuten?keyword=${encodeURIComponent(query)}`),
-        ]);
-        const data = await analysisResponse.json();
-        if (!analysisResponse.ok) throw new Error(data.error || "情報の取得に失敗しました。");
+      if (mode === "single") {
+        const res = await fetch("/api/analyze", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ productName: query }),
+        });
+        const data = await res.json();
+        if (data.error) throw new Error(data.error);
         setResult(data);
-        const rakutenData = await rakutenResponse.json();
-        if (rakutenData.items) setRakutenItems(rakutenData.items);
+        
+        // 楽天検索
+        const rakutenRes = await fetch(`/api/rakuten?keyword=${encodeURIComponent(query)}`);
+        const rakutenData = await rakutenRes.json();
+        if (rakutenData.items) {
+           setRakutenItems(rakutenData.items);
+        }
+      } else {
+        // 比較モード：安定のため1つずつ解析（逐次解析）
+        if (!compareQuery.trim()) {
+           throw new Error("比較対象の商品名を入力してください。");
+        }
+
+        // 商品1の解析
+        const res1 = await fetch("/api/analyze", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ productName: query }),
+        });
+        const data1 = await res1.json();
+        if (data1.error) throw new Error(`${query}: ${data1.error}`);
+        setCompareResult1(data1);
+
+        // APIの負荷軽減のために1秒待機
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        // 商品2の解析
+        const res2 = await fetch("/api/analyze", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ productName: compareQuery }),
+        });
+        const data2 = await res2.json();
+        if (data2.error) throw new Error(`${compareQuery}: ${data2.error}`);
+        setCompareResult2(data2);
+
+        // 総評の生成
+        const versusRes = await fetch("/api/compare", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ result1: data1, result2: data2 }),
+        });
+        const versusData = await versusRes.json();
+        setVersusVerdict(versusData.verdict);
       }
     } catch (err: any) {
       setError(err.message);
