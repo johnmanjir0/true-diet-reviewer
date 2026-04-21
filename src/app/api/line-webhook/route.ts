@@ -7,31 +7,44 @@ const SITE_URL = 'https://true-diet-reviewer.vercel.app';
 
 // LINE署名検証
 function validateSignature(body: string, signature: string): boolean {
-  if (!CHANNEL_SECRET) return true; // 環境変数未設定時はスキップ
+  if (!CHANNEL_SECRET) return true; // 未設定時はパス
   try {
     const hash = crypto
-      .createHmac('SHA256', CHANNEL_SECRET)
+      .createHmac('SHA256', CHANNEL_SECRET.trim())
       .update(body)
       .digest('base64');
-    return hash === signature;
-  } catch {
+    const isValid = hash === signature;
+    if (!isValid) {
+      console.warn('Signature mismatch. Hash:', hash, 'Signature:', signature);
+    }
+    return isValid;
+  } catch (e) {
+    console.error('Signature validation error:', e);
     return true;
   }
 }
 
 // LINEに返信
 async function replyToLine(replyToken: string, messages: any[]) {
+  if (!CHANNEL_ACCESS_TOKEN) {
+    console.error('LINE_CHANNEL_ACCESS_TOKEN is not set');
+    return;
+  }
   try {
-    await fetch('https://api.line.me/v2/bot/message/reply', {
+    const res = await fetch('https://api.line.me/v2/bot/message/reply', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${CHANNEL_ACCESS_TOKEN}`,
+        Authorization: `Bearer ${CHANNEL_ACCESS_TOKEN.trim()}`,
       },
       body: JSON.stringify({ replyToken, messages }),
     });
+    if (!res.ok) {
+      const errData = await res.json().catch(() => ({}));
+      console.error('LINE reply error:', res.status, JSON.stringify(errData));
+    }
   } catch (e) {
-    console.error('replyToLine error:', e);
+    console.error('replyToLine fetch error:', e);
   }
 }
 
