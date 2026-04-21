@@ -35,53 +35,23 @@ async function replyToLine(replyToken: string, messages: any[]) {
   }
 }
 
-// 商品を解析してLINE用テキストを生成
-async function analyzeProduct(productName: string): Promise<string> {
-  try {
-    const res = await fetch(`${SITE_URL}/api/analyze`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ productName }),
-    });
-    if (!res.ok) throw new Error('解析失敗');
-    const data = await res.json();
+// 商品のサイトリンクを生成
+function buildResultMessage(productName: string): string {
+  const encodedName = encodeURIComponent(productName);
+  return `📊「${productName}」のAI判定を開始します！
 
-    const riskEmoji = data.riskLevel === '安全' ? '✅' : data.riskLevel === '危険' ? '🔴' : '⚠️';
-    const subRisk = data.subscriptionRisk?.hasSubscription ? '⚠️ 定期購入あり（注意）' : '✅ 定期縛りの情報なし';
-    const yakukiho = data.yakukiho?.hasViolation
-      ? `🚨 薬機法違反の疑いあり（リスク: ${data.yakukiho.riskLevel}）`
-      : '✅ 薬機法上の問題表現なし';
-    const pros = data.prosSummary?.slice(0, 2).map((p: string) => `・${p}`).join('\n') || '';
-    const cons = data.consSummary?.slice(0, 2).map((c: string) => `・${c}`).join('\n') || '';
+🔗 以下のリンクをタップして結果を確認してください：
+${SITE_URL}?q=${encodedName}
 
-    return `📊「${data.productName}」のAI判定結果
+✅ ステマ危険度
+✅ 効果の信頼性
+✅ 薬機法チェック
+✅ 成分の科学的根拠
+✅ 定期縛りリスク
 
-${riskEmoji} 総合判定: ${data.riskLevel}
+などを無料でAI解析します！
 
-━━━ スコア ━━━
-🎯 効果の信頼性: ${data.scores.effectiveness}/100
-💰 コスパ満足度: ${data.scores.costPerformance}/100
-😊 継続しやすさ: ${data.scores.continuation}/100
-🕵️ ステマ危険度: ${data.scores.stemaRisk}/100
-⚕️ 健康リスク: ${data.scores.healthRisk}/100
-
-━━━ チェック ━━━
-${subRisk}
-${yakukiho}
-
-━━━ 良い点 ━━━
-${pros}
-
-━━━ 注意点 ━━━
-${cons}
-
-🔗 詳細はこちら
-${SITE_URL}
-
-※AIによる自動解析です。購入の最終判断はご自身でお願いします。`;
-  } catch {
-    return '解析中にエラーが発生しました。しばらく待ってから再度お試しください。';
-  }
+※「ヘルプ」と送ると使い方を表示します`;
 }
 
 export async function POST(req: NextRequest) {
@@ -89,7 +59,6 @@ export async function POST(req: NextRequest) {
     const rawBody = await req.text();
     const signature = req.headers.get('x-line-signature') || '';
 
-    // 署名検証失敗でも200を返す（LINEの検証リクエストをパスさせるため）
     if (!validateSignature(rawBody, signature)) {
       console.warn('LINE signature validation failed');
       return NextResponse.json({ status: 'ok' });
@@ -98,7 +67,6 @@ export async function POST(req: NextRequest) {
     const body = JSON.parse(rawBody);
     const events = body.events || [];
 
-    // 検証リクエスト（eventsが空）はそのまま200を返す
     if (events.length === 0) {
       return NextResponse.json({ status: 'ok' });
     }
@@ -108,7 +76,7 @@ export async function POST(req: NextRequest) {
         if (event.replyToken) {
           await replyToLine(event.replyToken, [{
             type: 'text',
-            text: '📝 ダイエット商品名を送ってください！\n例：「ナイシトール」「メタバリア」\n\nAIがステマ度・効果・成分・薬機法をリアルタイム解析します🔍',
+            text: '📝 調べたいダイエット商品名を送ってください！\n例：「ナイシトール」「メタバリア」',
           }]);
         }
         continue;
@@ -119,34 +87,19 @@ export async function POST(req: NextRequest) {
       if (userText === 'ヘルプ' || userText === 'help' || userText === '使い方') {
         await replyToLine(event.replyToken, [{
           type: 'text',
-          text: `🤖 TrueDiet Reviewer Bot の使い方\n\n調べたいダイエット商品名を送るだけ！\n\n📌 例：\n・ナイシトール\n・メタバリアS\n・〇〇ダイエットサプリ\n\nAIが以下を自動判定します：\n✅ 効果の信頼性\n🕵️ ステマ危険度\n💰 コスパ\n⚕️ 健康リスク\n🚨 薬機法チェック\n\n詳細はこちら：\n${SITE_URL}`,
+          text: `🤖 TrueDiet Reviewer Bot\n\n調べたいダイエット商品名を送るだけ！\n\n📌 例：\n・ナイシトール\n・メタバリアS\n・〇〇ダイエットサプリ\n\nAIが以下を無料判定：\n✅ ステマ危険度\n✅ 効果の信頼性\n✅ 薬機法チェック\n✅ 成分の科学的根拠\n\n🔗 サイトはこちら：\n${SITE_URL}`,
         }]);
         continue;
       }
 
-      // まず「解析中」を返信
+      // URL付きの結果メッセージを即座に返信
       await replyToLine(event.replyToken, [{
         type: 'text',
-        text: `🔍「${userText}」を解析中...\n少々お待ちください（10〜20秒）`,
+        text: buildResultMessage(userText),
       }]);
-
-      // 解析してPush APIで送信
-      const resultText = await analyzeProduct(userText);
-      await fetch('https://api.line.me/v2/bot/message/push', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${CHANNEL_ACCESS_TOKEN}`,
-        },
-        body: JSON.stringify({
-          to: event.source.userId,
-          messages: [{ type: 'text', text: resultText }],
-        }),
-      });
     }
   } catch (err) {
     console.error('LINE webhook error:', err);
-    // エラーが起きても必ず200を返す
   }
 
   return NextResponse.json({ status: 'ok' });

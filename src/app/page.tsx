@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Search, ShieldAlert, AlertTriangle, ShieldCheck, ThumbsUp, ThumbsDown, Activity, Sparkles, DollarSign, HeartPulse, ShoppingCart } from "lucide-react";
 
 interface Scores {
@@ -26,14 +26,28 @@ interface AnalysisResult {
 }
 
 export default function Home() {
+  const searchParams = typeof window !== 'undefined'
+    ? new URLSearchParams(window.location.search)
+    : null;
+  const initialQuery = searchParams?.get('q') || '';
+
   const [mode, setMode] = useState<"single" | "compare">("single");
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState(initialQuery);
   const [compareQuery, setCompareQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [compareResult, setCompareResult] = useState<AnalysisResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [rakutenItems, setRakutenItems] = useState<any[]>([]);
+
+  // URLパラメータ ?q=商品名 があれば自動解析
+  useEffect(() => {
+    if (initialQuery) {
+      const fakeEvent = { preventDefault: () => {} } as React.FormEvent;
+      setTimeout(() => handleSearch(fakeEvent), 300);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
