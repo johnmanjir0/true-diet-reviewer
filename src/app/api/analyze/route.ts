@@ -62,11 +62,12 @@ JSONのみを出力してください（Markdown装飾なし）。
     `;
 
     // 404エラー対策：利用可能なモデルを順番に試す
+    // ユーザーのAPIキーで実際に利用可能なモデル名に調整（2026年時点の最新エイリアス）
     const MODELS_TO_TRY = [
-      { name: 'gemini-1.5-flash-latest', version: 'v1' },
-      { name: 'gemini-1.5-flash', version: 'v1' },
-      { name: 'gemini-1.5-pro-latest', version: 'v1' },
-      { name: 'gemini-1.5-pro', version: 'v1' }
+      { name: 'gemini-flash-latest', version: 'v1' },
+      { name: 'gemini-2.0-flash', version: 'v1' },
+      { name: 'gemini-pro-latest', version: 'v1' },
+      { name: 'gemini-1.5-flash-latest', version: 'v1' }
     ];
 
     let responseText = '';
