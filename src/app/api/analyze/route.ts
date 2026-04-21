@@ -16,69 +16,77 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'サーバーのGemini APIキー設定が不足しています。' }, { status: 500 });
     }
 
-    // 1. Yahooウェブ検索にて口コミを収集（軽量化）
-    const searchQuery = `${productName} 口コミ OR 評判 OR 効果`;
+    // 1. Yahooウェブ検索にて口コミを収集（詳細化）
+    const searchQuery = `${productName} 口コミ OR 評判 OR 痩せない OR ステマ OR 効果`;
     const searchUrl = `https://search.yahoo.co.jp/search?p=${encodeURIComponent(searchQuery)}`;
     const headers = { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36" };
 
-    let searchContext = "検索結果を取得できませんでした。";
+    let searchContext = "";
     try {
       const searchResponse = await fetch(searchUrl, { headers });
       if (searchResponse.ok) {
         const html = await searchResponse.text();
         const $ = cheerio.load(html);
         const snippets: string[] = [];
-        $('.sw-CardContent').each((_, el) => {
-          snippets.push($(el).text().trim());
+        $('.sw-Card').each((i, el) => {
+          const title = $(el).find('h3').text() || $(el).find('.sw-Card__title').text();
+          const summary = $(el).find('.sw-Card__summary').text() || $(el).find('.sw-Card__desc').text();
+          if (title && summary) {
+            snippets.push(`【記事${i+1}】\n${title}\n${summary}`);
+          }
         });
-        if (snippets.length > 0) {
-          searchContext = snippets.slice(0, 5).join('\n\n');
-        }
+        searchContext = snippets.slice(0, 8).join('\n\n');
       }
     } catch (e) {
       console.warn('Search failed:', e);
     }
 
     const prompt = `
-以下のダイエット商品の情報を解析し、JSON形式で返してください。
-【対象商品】
-${productName}
-【検索結果の断片】
+あなたは優秀な「ダイエット商品の口コミ・ステマ判定AI」です。
+ユーザーが調べたい商品名: 「${productName}」
+以下のウェブ検索結果を元に、客観的かつ多角的に分析し、JSON形式で返してください。
+
+【検索結果データ】
 ${searchContext}
 
-必ず有効なJSONオブジェクトのみを出力してください。形式は以下の通りです：
+【出力ルール】
+- 必ず有効なJSONのみを返してください。
+- prosSummary と consSummary は、具体的かつリアルな声を反映し、それぞれ必ず「5つ」出してください。
+- 各スコアには、その点数になった理由を説明する「scoreExplanation」を付けてください。
+
+【出力形式】
 {
   "productName": "${productName}",
   "riskLevel": "安全" | "要注意" | "危険",
-  "scores": { "stemaRisk": 0-100, "effectiveness": 0-100, "costPerformance": 0-100, "continuation": 0-100, "healthRisk": 0-100 },
-  "verdict": "判定の結論",
-  "description": "ユーザーへのアドバイス",
-  "prosSummary": [],
-  "consSummary": [],
-  "subscriptionRisk": { "hasSubscription": boolean, "detail": "" },
+  "scores": {
+    "stemaRisk": { "value": 0-100, "explanation": "点数の根拠" },
+    "effectiveness": { "value": 0-100, "explanation": "点数の根拠" },
+    "costPerformance": { "value": 0-100, "explanation": "点数の根拠" },
+    "healthRisk": { "value": 0-100, "explanation": "点数の根拠" },
+    "continuation": { "value": 0-100, "explanation": "点数の根拠" }
+  },
+  "verdict": "ズバリ判定の一言（30文字以内）",
+  "description": "詳しい詳細分析とユーザーへの最終アドバイス",
+  "prosSummary": ["メリット1", "メリット2", "メリット3", "メリット4", "メリット5"],
+  "consSummary": ["デメリット1", "デメリット2", "デメリット3", "デメリット4", "デメリット5"],
+  "warningPoints": ["具体的な解約トラブルなどの注意点1", "注意点2"],
+  "subscriptionRisk": { "hasSubscription": boolean, "detail": "定期コース等の注意点" },
   "yakukiho": { "hasViolation": boolean, "riskLevel": "高"| "中"| "低", "violationWords": [], "advice": "" },
   "ingredients": [{ "name": "", "evidence": "high"|"medium"|"low", "note": "" }],
-  "imageUrl": ""
+  "imageUrl": "",
+  "adRatio": 0-100
 }
     `;
 
-    // 安定性を極大化するため、SDKを使わず直接REST APIを叩く
     const apiKey = GEMINI_API_KEY.trim();
-    // 試行するモデルのリスト
-    const MODELS = [
-      'gemini-1.5-flash',
-      'gemini-2.0-flash',
-      'gemini-flash-latest',
-      'gemini-pro-latest'
-    ];
+    const MODELS = ['gemini-flash-latest', 'gemini-2.0-flash', 'gemini-1.5-flash'];
 
     let responseData = null;
     let lastErrorDetails = "";
 
     for (const model of MODELS) {
       try {
-        console.log(`[Analyze] Fetching from Google API using model: ${model}`);
-        // v1beta を使用し、camelCase のパラメータを適用
+        console.log(`[Analyze] Using model: ${model}`);
         const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
         
         const geminiRes = await fetch(geminiUrl, {
@@ -86,41 +94,32 @@ ${searchContext}
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             contents: [{ parts: [{ text: prompt }] }],
-            generationConfig: {
-              responseMimeType: "application/json"
-            }
+            generationConfig: { responseMimeType: "application/json" }
           })
         });
 
         const resJson = await geminiRes.json();
-
         if (geminiRes.ok && resJson.candidates?.[0]?.content?.parts?.[0]?.text) {
           const text = resJson.candidates[0].content.parts[0].text;
           const jsonMatch = text.match(/\{[\s\S]*\}/);
           responseData = JSON.parse(jsonMatch ? jsonMatch[0] : text);
-          console.log(`[Analyze] Success with model: ${model}`);
           break;
         } else {
           lastErrorDetails = resJson.error?.message || JSON.stringify(resJson);
-          console.warn(`[Analyze] Model ${model} failed: ${lastErrorDetails}`);
         }
       } catch (e: any) {
         lastErrorDetails = e.message;
-        console.error(`[Analyze] Request to ${model} failed:`, e);
       }
     }
 
     if (!responseData) {
-      return NextResponse.json({ 
-        error: 'AI解析サービスとの通信に失敗しました。',
-        details: lastErrorDetails 
-      }, { status: 503 });
+      return NextResponse.json({ error: 'AI解析に失敗しました。', details: lastErrorDetails }, { status: 503 });
     }
 
     return NextResponse.json(responseData);
 
   } catch (error: any) {
     console.error('Final Analysis error:', error);
-    return NextResponse.json({ error: '解析中にエラーが発生しました。', details: error.message }, { status: 500 });
+    return NextResponse.json({ error: 'システム内部エラーが発生しました。', details: error.message }, { status: 500 });
   }
 }
