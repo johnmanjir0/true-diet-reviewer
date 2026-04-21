@@ -109,12 +109,18 @@ export default function Home() {
         <p className="subtitle" style={{ marginBottom: "1rem" }}>AIによるダイエット商品のステマ・口コミ判定</p>
 
         {/* サイト説明文（SEO兼ねた紹介文） */}
-        <div style={{ background: "rgba(14,165,233,0.06)", border: "1px solid rgba(14,165,233,0.2)", borderRadius: "16px", padding: "1.5rem", marginBottom: "2rem", lineHeight: "1.8", color: "#334155", fontSize: "0.95rem" }}>
+        <div style={{ background: "rgba(14,165,233,0.06)", border: "1px solid rgba(14,165,233,0.2)", borderRadius: "16px", padding: "1.5rem", marginBottom: "1.5rem", lineHeight: "1.8", color: "#334155", fontSize: "0.95rem" }}>
           <p style={{ marginBottom: "0.8rem" }}>
-            この商品は本当に信じていいの？WEB上の口コミをAIがリアルタイム解析し、本音を暴きます。
+            「このダイエットサプリ、本当に効くの？」「口コミが良すぎて逆に怪しい…」
+            そんな疑問をお持ちの方のために作られた、<strong>AIが口コミをリアルタイム解析して本音を暴くツール</strong>です。
+          </p>
+          <p style={{ marginBottom: "0.8rem" }}>
+            商品名を入力するだけで、WEB上の口コミ・レビューをAIが自動収集し、
+            <strong>「ステマ危険度」「効果の信頼性」「短評」「健康維持リスク」「定期縛りの有無」</strong>など
+            多角的な視点で徹底分析します。高額なダイエット商品の購入前に、ぜひ一度ご活用ください。
           </p>
           <p style={{ fontSize: "0.85rem", color: "#64748b" }}>
-            ※ステマ危険度、成分の根拠、薬機法違反、定期縛りなどを徹底分析します。
+            ※ステマ（ステルスマーケティング）とは：企業から報酬をもらいながら、一般客を装って商品を絶賛する「サクラ口コミ」のことです。
           </p>
         </div>
 
