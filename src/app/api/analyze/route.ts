@@ -30,124 +30,99 @@ export async function POST(req: NextRequest) {
 
     const html = await searchResponse.text();
     const $ = cheerio.load(html);
-    const searchSnippetsList: string[] = [];
-
-    $('.sw-Card').each((i, el) => {
-      const title = $(el).find('h3').text() || $(el).find('.sw-Card__title').text();
-      const snippet = $(el).find('.sw-Card__summary').text() || $(el).find('.sw-Card__desc').text();
-      if (title && snippet) {
-        searchSnippetsList.push(`【記事${i + 1}】\nタイトル: ${title}\n要約: ${snippet}`);
-      }
+    const snippets: string[] = [];
+    $('.sw-CardContent').each((_, el) => {
+      snippets.push($(el).text().trim());
     });
+    const searchContext = snippets.slice(0, 10).join('\n\n');
 
-    if (searchSnippetsList.length === 0) {
-      return NextResponse.json({ error: '口コミ情報が見つかりませんでした。対象商品のリアルな情報がネット上に存在しない可能性があります。' }, { status: 404 });
-    }
-    const searchSnippets = searchSnippetsList.join('\n\n');
-
-    // 2. Yahoo画像検索にて商品サムネイルを収集
-    const imageUrlSearchUrl = `https://search.yahoo.co.jp/image/search?p=${encodeURIComponent(productName + ' 商品 パッケージ')}`;
-    let productImageUrl = "";
-    try {
-      const imgRes = await fetch(imageUrlSearchUrl, { headers });
-      const imgHtml = await imgRes.text();
-      const $img = cheerio.load(imgHtml);
-      $img('img').each((i, el) => {
-        const src = $img(el).attr('src');
-        if (src && (src.startsWith('https://') || src.startsWith('http://')) && !productImageUrl) {
-          productImageUrl = src;
-        }
-      });
-    } catch (e) {
-      console.error("Image scrape error:", e);
-    }
-
-    // 3. Gemini API を使用したテキスト解析と判定（503の場合は別モデルにフォールバック）
     const prompt = `
-あなたは優秀な「ダイエット商品の口コミ・ステマ判定AI」かつ「薬機法コンプライアンス判定AI」です。
-ユーザーが調べたい商品名: 「${productName}」
-以下の検索エンジンの抽出結果（リアルな口コミサイトや掲示板が中心）を分析し、ステマの可能性、消費者の本音、定期購入リスク、薬機法違反の疑い、そして主要成分の科学的根拠を客観的に判定してください。
+以下のダイエット商品の基本情報と検索結果の断片をもとに、客観的な判定を行ってください。
+必ず有効なJSON形式で出力してください。
 
-【検索結果データ】
----
-${searchSnippets}
----
+【対象商品】
+${productName}
 
-上記データを元に、以下のJSONフォーマットで**必ず正しいJSON文字列のみ**を出力してください。追加のマークダウンや文章は一切不要です。
+【検索結果のコンテキスト】
+${searchContext}
 
+【出力形式】
 {
-  "productName": "${productName}",
+  "productName": "商品名",
+  "riskLevel": "安全" | "要注意" | "危険",
   "scores": {
-    "stemaRisk": 0から100の整数 (100が最もステマの可能性が高く危険),
-    "effectiveness": 0から100の整数 (実際のダイエット効果・変化の信頼性。100が最も信頼できる),
-    "costPerformance": 0から100の整数 (価格設定へのユーザーの納得感、解約のしやすさなど。100が最もコスパ良し),
-    "healthRisk": 0から100の整数 (下痢や体調不良への懸念スコア。100が最も健康被害リスクが高い),
-    "continuation": 0から100の整数 (味、飲む量などの継続しやすさ。100が最も続けやすい)
+    "stemaRisk": 0-100,
+    "effectiveness": 0-100,
+    "costPerformance": 0-100,
+    "continuation": 0-100,
+    "healthRisk": 0-100
   },
-  "riskLevel": "安全" | "注意" | "危険" のいずれか (stemaRiskやhealthRiskを総合して判定),
-  "prosSummary": ["メリット1", "メリット2", "メリット3", "メリット4", "メリット5"] (必ず5つ出してください),
-  "consSummary": ["デメリット1", "デメリット2", "デメリット3", "デメリット4", "デメリット5"] (必ず5つ出してください),
-  "warningPoints": ["具体的な解約トラブルや強い副作用の報告があれば記載1", "気をつけるべき点2"] (なければ空配列),
-  "adRatio": 0から100の整数 (検索結果における広告・アフィリエイト割合),
+  "verdict": "判定の結論（100文字程度）",
+  "description": "総合判定の下に表示する、ユーザーが取るべき行動やアドバイス（左寄せ、150文字程度）",
+  "prosSummary": ["メリット1", "メリット2"],
+  "consSummary": ["デメリット1", "デメリット2"],
   "subscriptionRisk": {
-    "hasSubscription": true または false (定期縛りや定期購入の記述があればtrue、一切見当たらなければfalse。買い切りならfalse),
-    "notes": "定期購入に関するユーザーの声や注意点（例：定期縛りあり、初回のみ安いが解約が電話のみ、など。情報がない場合は「定期購入の制限に関する目立った情報はありません」）"
+    "hasSubscription": boolean,
+    "detail": "定期購入に関する詳細（例：4回の回数縛りあり、初回のみ解約可など）"
   },
   "yakukiho": {
-    "hasViolation": true または false (広告・口コミ・商品説明の中に薬機法違反の疑いがある表現が見られる場合true。例：「確実に痩せる」「〇kgやせることを保証」「脂肪が燃える」「医師も推薦」「病気を治す」「副作用なし」などの断定・保証・医薬品的表現),
-    "violationWords": ["疑いのある表現1", "疑いのある表現2"] (見つかったもの。なければ空配列),
-    "riskLevel": "高" | "中" | "低" | "なし" (違反の深刻さ)
+    "hasViolation": boolean,
+    "riskLevel": "高" | "中" | "低",
+    "violationWords": ["具体的な違反ワード1", "2"],
+    "advice": "広告や口コミを見る際の注意点"
   },
   "ingredients": [
-    {
-      "name": "成分名（例：カルニチン、CLA、酵素、コラーゲン、カプサイシンなど）",
-      "evidence": "high" | "medium" | "low" (科学的根拠の強さ。highは複数の査読論文で効果確認済み、mediumは一部の研究で効果示唆、lowはほぼ根拠なし・個人差が大きい),
-      "note": "根拠の簡単な説明（1〜2文）"
-    }
-  ] (検索結果から読み取れる主要成分を最大5つ。成分情報が全くない場合は空配列)
+    { "name": "成分名", "evidence": "high" | "medium" | "low", "note": "その成分の効果に関する短い解説" }
+  ],
+  "imageUrl": "商品画像のURL（検索結果から推測されるものがあれば）"
 }
     `;
 
     const MODELS_TO_TRY = [
-      'gemini-1.5-flash-latest',
-      'gemini-2.0-flash-exp',
       'gemini-1.5-flash',
-      'gemini-1.5-pro-latest',
+      'gemini-1.5-pro',
+      'gemini-2.0-flash-exp'
     ];
     let responseText = '';
     let lastError: any = null;
 
     for (const modelName of MODELS_TO_TRY) {
       try {
-        const model = genAI.getGenerativeModel({ model: modelName });
+        console.log(`Trying model: ${modelName}`);
+        // v1betaでの404回避のため、安定版のv1を明示的に指定（expモデル以外）
+        const apiVersion = modelName.includes('exp') ? 'v1beta' : 'v1';
+        const model = genAI.getGenerativeModel({ model: modelName }, { apiVersion });
+        
         const result = await model.generateContent(prompt);
         responseText = result.response.text();
-        lastError = null;
-        break;
-      } catch (e: any) {
-        console.warn(`Model ${modelName} failed: ${e.message}`);
-        lastError = e;
-        if (!e.message?.includes('503') && !e.message?.includes('overloaded') && !e.message?.includes('high demand')) {
-          throw e;
+        if (responseText) {
+          console.log(`Success with model: ${modelName}`);
+          break;
         }
+      } catch (e: any) {
+        lastError = e;
+        console.error(`Model ${modelName} failed:`, e.status, e.message);
+        // 次のモデルへ
       }
     }
 
-    if (!responseText && lastError) {
-      throw new Error('AIモデルが現在混み合っています。少し待ってから再度お試しください。');
+    if (!responseText) {
+      console.error('All models failed. Last error:', lastError?.message);
+      return NextResponse.json({ 
+        error: 'AIモデルが現在混み合っているか、アクセスできません。時間を置いて再度お試しください。',
+        details: lastError?.message 
+      }, { status: 503 });
     }
-    
-    // JSONのパース
-    const jsonStr = responseText.replace(/```json\n?|\n?```/g, '').trim();
-    const analysisResult = JSON.parse(jsonStr);
 
-    // 画像URLをレスポンスに付与
-    analysisResult.imageUrl = productImageUrl;
+    // JSONの抽出（Markdownのデコレーションを除去）
+    const jsonMatch = responseText.match(/\{[\s\S]*\}/);
+    const jsonStr = jsonMatch ? jsonMatch[0] : responseText;
+    const data = JSON.parse(jsonStr);
 
-    return NextResponse.json(analysisResult);
+    return NextResponse.json(data);
 
   } catch (error: any) {
-    console.error('Analytics API Error:', error);
-    return NextResponse.json({ error: `解析中にエラーが発生しました: ${error.message}` }, { status: 500 });
+    console.error('Analysis error:', error);
+    return NextResponse.json({ error: '解析中にエラーが発生しました。', details: error.message }, { status: 500 });
   }
 }
