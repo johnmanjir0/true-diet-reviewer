@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "🔍 ステマ判定｜TrueDiet Reviewer（AI口コミ解析）",
-    description: "商品名を入力するだけでAIがリアルタイム解析。ステマ・定期縛りのリスクを購入前にチェックできる無料ツールです。",
+    description: "商品名を入力するだけでAIが口コミを多角的に解析。納得のいくダイエット選びをサポートする無料ツールです。",
     type: "website",
     locale: "ja_JP",
     url: "https://true-diet-reviewer.vercel.app",
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "🔍 ステマ判定｜TrueDiet Reviewer（AI口コミ解析）",
-    description: "ダイエット商品のステマや定期縛りをAIが暴く！商品名を入れるだけで即解析（無料）",
+    description: "AIが口コミの本音を可視化。納得できるダイエット選びをサポートします（無料解析）",
     images: ["https://true-diet-reviewer.vercel.app/ogp.png"],
   },
 };
