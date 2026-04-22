@@ -278,17 +278,37 @@ body {
 /* SNSシェア */
 .share-section-rich { text-align: center; margin-bottom: 3rem; }
 .share-section-rich p { font-weight: 800; color: #64748b; font-size: 0.9rem; margin-bottom: 1rem; }
-.share-btns { display: flex; justify-content: center; gap: 0.8rem; flex-wrap: wrap; }
-.share-btns a, .share-btns button {
-  padding: 0.8rem 1.5rem; border-radius: 999px; font-weight: 700; text-decoration: none; font-size: 0.9rem; transition: all 0.2s; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;
+.share-btns { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; }
+.share-btns a {
+  padding: 1rem 2rem; border-radius: 999px; font-weight: 700; text-decoration: none; font-size: 1rem; transition: all 0.2s; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;
 }
 .btn-x { background: #000; color: #fff; }
 .btn-line { background: #06C755; color: #fff; }
-.btn-fb { background: #1877F2; color: #fff; }
-.btn-insta { background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc23b6 75%, #bc1888 100%); color: #fff; }
-.btn-copy { background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0 !important; }
 
-.share-btns a:hover, .share-btns button:hover { transform: translateY(-3px); box-shadow: 0 6px 16px rgba(0,0,0,0.2); opacity: 0.95; }
+.share-btns a:hover { transform: translateY(-3px); box-shadow: 0 6px 16px rgba(0,0,0,0.2); opacity: 0.95; }
+
+/* 豆知識コラム */
+.column-section-rich {
+  margin-top: 4rem;
+  padding: 3rem 2rem;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border-radius: 32px;
+  border: 1px solid #e2e8f0;
+}
+.column-grid-rich {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+.column-item {
+  background: #fff;
+  padding: 1.5rem;
+  border-radius: 20px;
+  border: 1px solid #f1f5f9;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);
+}
+.column-item h4 { color: var(--primary); font-weight: 800; margin-bottom: 0.8rem; font-size: 1.1rem; }
+.column-item p { fontSize: 0.9rem; color: #475569; line-height: 1.8; }
 
 /* マネタイズ */
 .monetization-rich { border-top: 1px dashed #e2e8f0; padding-top: 3rem; }
@@ -315,7 +335,8 @@ body {
 .copyright { font-size: 0.85rem; font-weight: 700; color: #cbd5e1; }
 
 @media (max-width: 640px) {
-  .details-grid-rich, .info-grid-rich, .score-grid-rich { grid-template-columns: 1fr; }
+  .details-grid-rich, .info-grid-rich, .score-grid-rich, .column-grid-rich { grid-template-columns: 1fr; }
+  .column-section-rich { padding: 2rem 1.2rem; }
   .title { font-size: 2.2rem; }
   .glass-panel { padding: 2rem 1.2rem; }
 }

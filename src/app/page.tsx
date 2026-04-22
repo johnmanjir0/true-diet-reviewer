@@ -325,29 +325,8 @@ export default function Home() {
             <div className="share-section-rich">
               <p>この判定結果をSNSで共有する</p>
               <div className="share-btns">
-                <a href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`【AI判定】「${result.productName}」のステマ危険度は…『${result.scores.stemaRisk.value}%』でした！🔍\n\n判定：${result.verdict}\n${result.description}\n\n#TrueDietReviewer #ダイエット #ステマ判定\n`)}&url=${encodeURIComponent(`https://true-diet-reviewer.vercel.app/?q=${result.productName}`)}`} target="_blank" className="btn-x">𝕏 ポスト</a>
-                <a href={`https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(`https://true-diet-reviewer.vercel.app/?q=${result.productName}`)}`} target="_blank" className="btn-line">LINE</a>
-                <a href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(`https://true-diet-reviewer.vercel.app/?q=${result.productName}`)}`} target="_blank" className="btn-fb">Facebook</a>
-                <button 
-                  onClick={() => {
-                    navigator.clipboard.writeText(`【AI判定】「${result.productName}」の解析結果｜TrueDiet Reviewer\nhttps://true-diet-reviewer.vercel.app/?q=${encodeURIComponent(result.productName)}`);
-                    setCopyStatus("Instagram用にコピー完了！");
-                    setTimeout(() => setCopyStatus("Instagram"), 2000);
-                  }}
-                  className="btn-insta"
-                >
-                  {copyStatus === "リンクをコピー" ? "Instagram" : copyStatus}
-                </button>
-                <button 
-                  onClick={() => {
-                    navigator.clipboard.writeText(`「${result.productName}」のAI判定結果｜TrueDiet Reviewer\nhttps://true-diet-reviewer.vercel.app/?q=${encodeURIComponent(result.productName)}`);
-                    setCopyStatus("コピー完了！");
-                    setTimeout(() => setCopyStatus("リンクをコピー"), 2000);
-                  }}
-                  className="btn-copy"
-                >
-                  {copyStatus}
-                </button>
+                <a href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`【闇を暴く】AIが「${result.productName}」の口コミを徹底解析した結果…😱\n\n🛡️ ステマ危険度: ${result.scores.stemaRisk.value}%\n📊 判定：${result.verdict}\n\n「もっと早く知りたかった」となる前に、AIの本音判定をチェック！\n#TrueDietReviewer #ダイエット #ステマ判定\n`)}&url=${encodeURIComponent(`https://true-diet-reviewer.vercel.app/?q=${result.productName}`)}`} target="_blank" className="btn-x">𝕏 でポストして共有</a>
+                <a href={`https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(`https://true-diet-reviewer.vercel.app/?q=${result.productName}`)}`} target="_blank" className="btn-line">LINEで友達に教える</a>
               </div>
             </div>
 
@@ -374,33 +353,33 @@ export default function Home() {
       </div>
 
       {/* 豆知識コラム（AdSense審査対策の独自記事セクション） */}
-      <div style={{ marginTop: "4rem", padding: "3rem 2rem", background: "linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)", borderRadius: "32px", border: "1px solid #e2e8f0" }}>
+      <div className="column-section-rich">
         <h3 style={{ fontSize: "1.4rem", fontWeight: "900", color: "#0f172a", marginBottom: "2rem", textAlign: "center" }}>
           📖 AIが教える、失敗しないダイエットサプリの選び方
         </h3>
         
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "2rem" }}>
-          <div style={{ background: "#fff", padding: "1.5rem", borderRadius: "20px", border: "1px solid #f1f5f9", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.02)" }}>
-            <h4 style={{ color: "var(--primary)", fontWeight: "800", marginBottom: "0.8rem", fontSize: "1.1rem" }}>1. 「魔法の言葉」に惑わされない</h4>
-            <p style={{ fontSize: "0.9rem", color: "#475569", lineHeight: "1.8" }}>
+        <div className="column-grid-rich">
+          <div className="column-item">
+            <h4>1. 「魔法の言葉」に惑わされない</h4>
+            <p>
               「寝ている間に」「運動なしで劇的変化」といった極端な表現には注意が必要です。サプリメントはあくまで食事や運動をサポートする「食品」であり、医薬品のような即効性はありません。AIの解析では、こうした過度な表現（ステマの可能性）を厳しくチェックしています。
             </p>
           </div>
-          <div style={{ background: "#fff", padding: "1.5rem", borderRadius: "20px", border: "1px solid #f1f5f9", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.02)" }}>
-            <h4 style={{ color: "var(--primary)", fontWeight: "800", marginBottom: "0.8rem", fontSize: "1.1rem" }}>2. 成分の「裏付け」を確認する</h4>
-            <p style={{ fontSize: "0.9rem", color: "#475569", lineHeight: "1.8" }}>
+          <div className="column-item">
+            <h4>2. 成分の「裏付け」を確認する</h4>
+            <p>
               配合されている成分が、実際にどのような研究データに基づいているかを確認しましょう。当ツールの「成分根拠チェック」では、配合成分が科学的な信頼性（機能性表示食品の届出など）に基づいているかを可視化しています。
             </p>
           </div>
-          <div style={{ background: "#fff", padding: "1.5rem", borderRadius: "20px", border: "1px solid #f1f5f9", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.02)" }}>
-            <h4 style={{ color: "var(--primary)", fontWeight: "800", marginBottom: "0.8rem", fontSize: "1.1rem" }}>3. 「解約ルール」は購入前に必ず見る</h4>
-            <p style={{ fontSize: "0.9rem", color: "#475569", lineHeight: "1.8" }}>
+          <div className="column-item">
+            <h4>3. 「解約ルール」は購入前に必ず見る</h4>
+            <p>
               初回価格が異常に安い商品は、数ヶ月間の継続が必須（定期縛り）となっているケースが多々あります。購入手続きを完了する前に、必ず「特定商取引法に基づく表記」を確認しましょう。当AIは口コミから解約トラブルの兆候も逃さず抽出します。
             </p>
           </div>
-          <div style={{ background: "#fff", padding: "1.5rem", borderRadius: "20px", border: "1px solid #f1f5f9", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.02)", display: "flex", flexDirection: "column", justifyContent: "center" }}>
-            <h4 style={{ color: "var(--primary)", fontWeight: "800", marginBottom: "0.8rem", fontSize: "1.1rem" }}>4. 購入前の「セカンドオピニオン」に</h4>
-            <p style={{ fontSize: "0.9rem", color: "#475569", lineHeight: "1.8" }}>
+          <div className="column-item">
+            <h4>4. 購入前の「セカンドオピニオン」に</h4>
+            <p>
               気になる商品を見つけたら、まず当サイトのAIに商品名を入力してみてください。WEB上の膨大なリアルボイスを10秒で集約。広告の裏側にある「本当の評判」を知ることで、納得のいくダイエット生活をサポートします。
             </p>
           </div>
