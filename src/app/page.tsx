@@ -285,7 +285,7 @@ export default function Home() {
             {/* マネタイズ */}
             <div className="monetization-rich">
               <div className="ad-banner">スポンサーリンク</div>
-              <h3 className="section-title-sub">📦 商品の紹介</h3>
+              <h3 className="section-title-sub">📦 解析した商品はこちら</h3>
               {result.imageUrl && (
                 <div className="product-card-rich">
                   <img src={result.imageUrl} alt={result.productName} />
