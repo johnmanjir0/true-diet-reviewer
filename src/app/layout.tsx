@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   description: "ダイエットサプリや痩せる商品の口コミをAIがリアルタイム解析。ステマ危険度・効果の信頼性・コスパ・副作用リスク・定期縛りの有無を徹底判定。購入前に必ずチェック！",
   keywords: ["ダイエット", "サプリ", "口コミ", "ステマ", "判定", "AI", "副作用", "定期購入", "解約", "効果なし", "嘘"],
   icons: {
-    icon: "/favicon.png",
+    icon: "/icon.png?v=2",
   },
   openGraph: {
     title: "🔍 ステマ判定｜TrueDiet Reviewer（AI口コミ解析）",
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
     locale: "ja_JP",
     url: "https://true-diet-reviewer.vercel.app",
     images: [{
-      url: "https://true-diet-reviewer.vercel.app/ogp.png",
+      url: "https://true-diet-reviewer.vercel.app/ogp.png?v=2",
       width: 1200,
       height: 630,
       alt: "TrueDiet Reviewer - AIダイエット商品判定ツール",
@@ -36,7 +36,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "🔍 ステマ判定｜TrueDiet Reviewer（AI口コミ解析）",
     description: "AIが口コミの本音を可視化。納得できるダイエット選びをサポートします（無料解析）",
-    images: ["https://true-diet-reviewer.vercel.app/ogp.png"],
+    images: ["https://true-diet-reviewer.vercel.app/ogp.png?v=2"],
   },
 };
 
