@@ -156,6 +156,39 @@ export default function Home() {
           </button>
         </form>
 
+        {/* 最近解析された商品（AdSense対策兼ねたリンク集） */}
+        <div style={{ marginBottom: "2rem" }}>
+          <p style={{ fontSize: "0.85rem", fontWeight: "bold", color: "#64748b", marginBottom: "0.8rem", display: "flex", alignItems: "center", gap: "0.4rem" }}>
+            <Activity size={16} /> 最近解析された商品
+          </p>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "0.6rem" }}>
+            {["ナイシトールZ", "防風通聖散", "メタバリアEX", "キラリ麹の炭クレンズ", "シボヘール", "内脂サポート"].map((p) => (
+              <button
+                key={p}
+                onClick={() => {
+                  setQuery(p);
+                  const ev = { preventDefault: () => {} } as React.FormEvent;
+                  handleSearch(ev);
+                }}
+                style={{
+                  padding: "0.4rem 0.8rem",
+                  borderRadius: "999px",
+                  border: "1px solid #e2e8f0",
+                  background: "#fff",
+                  fontSize: "0.80rem",
+                  color: "#475569",
+                  cursor: "pointer",
+                  transition: "all 0.2s"
+                }}
+                onMouseOver={(e) => e.currentTarget.style.borderColor = "var(--primary)"}
+                onMouseOut={(e) => e.currentTarget.style.borderColor = "#e2e8f0"}
+              >
+                {p}
+              </button>
+            ))}
+          </div>
+        </div>
+
         {error && <div className="error-message">{error}</div>}
 
         {result && (
@@ -302,6 +335,26 @@ export default function Home() {
             </div>
           </div>
         )}
+      </div>
+
+      {/* 当サイトについて（紹介セクション） */}
+      <div style={{ marginTop: "3rem", padding: "2.5rem 2rem", background: "#fff", borderRadius: "32px", border: "1px solid #e2e8f0", boxShadow: "var(--shadow-sm)" }}>
+        <h3 style={{ fontSize: "1.4rem", fontWeight: "900", color: "#0f172a", marginBottom: "1.5rem", display: "flex", alignItems: "center", gap: "0.6rem" }}>
+          <Sparkles size={24} color="var(--primary)" /> TrueDiet Reviewer とは
+        </h3>
+        <p style={{ color: "#334155", fontSize: "1rem", lineHeight: "2", marginBottom: "1.5rem" }}>
+          「これを飲むだけで-10kg」「SNSで話題沸騰！」<br />
+          ダイエット商品の広告やインフルエンサーの投稿を見て、期待と疑いの両方を感じたことはありませんか？
+        </p>
+        <p style={{ color: "#334155", fontSize: "1rem", lineHeight: "2", marginBottom: "1.5rem" }}>
+          現在のネット上には、企業から報酬を得て書かれた「ステマ（ステルスマーケティング）」や、過大な表現を含む広告が溢れています。
+        </p>
+        <p style={{ color: "#334155", fontSize: "1rem", lineHeight: "2", marginBottom: "1.5rem" }}>
+          TrueDiet Reviewerは、そんな情報の迷路に迷い込んだ方のために、最新のAI技術を用いて<strong>「ネット上のリアルな本音」を客観的に可視化するツール</strong>です。
+        </p>
+        <p style={{ color: "#334155", fontSize: "1rem", lineHeight: "2" }}>
+          特定の企業に忖度せず、WEB上の膨大な口コミを独自にAIが精査。リスクやコスパ、科学的根拠を公正に採点し、あなたが<strong>「本当に納得できる買い物」</strong>をするためのパートナーとなります。
+        </p>
       </div>
       <footer className="footer-rich">
         <div className="footer-links">
