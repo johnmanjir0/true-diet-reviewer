@@ -325,7 +325,7 @@ export default function Home() {
             <div className="share-section-rich">
               <p>この判定結果をSNSで共有する</p>
               <div className="share-btns">
-                <a href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`【闇を暴く】AIが「${result.productName}」の口コミを徹底解析した結果…😱\n\n🛡️ ステマ危険度: ${result.scores.stemaRisk.value}%\n📊 判定：${result.verdict}\n\n「もっと早く知りたかった」となる前に、AIの本音判定をチェック！\n#TrueDietReviewer #ダイエット #ステマ判定\n`)}&url=${encodeURIComponent(`https://true-diet-reviewer.vercel.app/?q=${result.productName}`)}`} target="_blank" className="btn-x">𝕏 でポストして共有</a>
+                <a href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`【闇を暴く】AIが「${result.productName}」をガチ判定！😱\n\n🛡️ ステマ度: ${result.scores.stemaRisk.value}%\n📊 結論：${result.verdict}\n\n🔍 AIの分析：\n「${result.description.length > 40 ? result.description.substring(0, 40) + '...' : result.description}」\n\n✅ 良い点：${result.prosSummary[0]}\n⚠️ 注意点：${result.consSummary[0]}\n\n「もっと早く知りたかった」となる前にチェック👇\n#TrueDietReviewer #ダイエット #ステマ判定\n`)}&url=${encodeURIComponent(`https://true-diet-reviewer.vercel.app/?q=${result.productName}`)}`} target="_blank" className="btn-x">𝕏 でポストして共有</a>
                 <a href={`https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(`https://true-diet-reviewer.vercel.app/?q=${result.productName}`)}`} target="_blank" className="btn-line">LINEで友達に教える</a>
               </div>
             </div>
