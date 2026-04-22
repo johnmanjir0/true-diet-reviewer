@@ -178,6 +178,18 @@ export default function Home() {
 
             {/* 数値スコアグリッド（解説付き） */}
             <h3 className="section-title-sub"><Activity size={18} /> 解析パラメータ詳細</h3>
+            
+            {/* 数値の意味についての解説 */}
+            <div style={{ background: "#f8fafc", border: "1px solid #e2e8f0", borderRadius: "12px", padding: "1rem", marginBottom: "1.2rem", fontSize: "0.85rem", color: "#64748b" }}>
+              <p style={{ fontWeight: "bold", marginBottom: "0.4rem", color: "#475569" }}>📊 数値の読み方（100点満点）</p>
+              <ul style={{ listStyle: "none", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.4rem 1rem" }}>
+                <li>• <strong>ステマリスク</strong>: 高いほど宣伝色が強く要注意</li>
+                <li>• <strong>効果の信頼性</strong>: 高いほど体験者の高評価が多い</li>
+                <li>• <strong>コスパ満足度</strong>: 高いほど価格への納得感が強い</li>
+                <li>• <strong>継続のしやすさ</strong>: 高いほど味や手軽さで好評</li>
+                <li>• <strong>健康維持リスク</strong>: 高いほど副作用等の懸念あり</li>
+              </ul>
+            </div>
             <div className="score-grid-rich">
               <ScoreCard label="ステマ・宣伝リスク" detail={result.scores.stemaRisk} type="negative" icon={ShieldAlert} />
               <ScoreCard label="効果の実感・信頼性" detail={result.scores.effectiveness} type="positive" icon={ThumbsUp} />
