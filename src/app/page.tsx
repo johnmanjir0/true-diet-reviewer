@@ -42,6 +42,15 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null);
   const [rakutenItems, setRakutenItems] = useState<any[]>([]);
 
+  // タブのタイトルを動的に変更
+  useEffect(() => {
+    if (result) {
+      document.title = `「${result.productName}」の解析結果｜TrueDiet Reviewer`;
+    } else {
+      document.title = "🔍 ステマ判定｜TrueDiet Reviewer（AI口コミ解析）";
+    }
+  }, [result]);
+
   useEffect(() => {
     if (initialQuery) {
       const fakeEvent = { preventDefault: () => {} } as React.FormEvent;

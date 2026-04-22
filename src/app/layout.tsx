@@ -13,11 +13,14 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "TrueDiet Reviewer｜ダイエット商品のステマ・口コミをAIで判定",
-  description: "ダイエットサプリや痩せる商品の口コミをAIがリアルタイム解析。ステマ危険度・効果の信頼性・コスパ・副作用リスク・定期縛りの有無を6項目で徹底判定。購入前に必ずチェック！",
+  title: "🔍 ステマ判定｜TrueDiet Reviewer（AI口コミ解析）",
+  description: "ダイエットサプリや痩せる商品の口コミをAIがリアルタイム解析。ステマ危険度・効果の信頼性・コスパ・副作用リスク・定期縛りの有無を徹底判定。購入前に必ずチェック！",
   keywords: ["ダイエット", "サプリ", "口コミ", "ステマ", "判定", "AI", "副作用", "定期購入", "解約", "効果なし", "嘘"],
+  icons: {
+    icon: "/favicon.png",
+  },
   openGraph: {
-    title: "TrueDiet Reviewer｜ダイエット商品のステマ・口コミをAIで判定",
+    title: "🔍 ステマ判定｜TrueDiet Reviewer（AI口コミ解析）",
     description: "商品名を入力するだけでAIがリアルタイム解析。ステマ・定期縛りのリスクを購入前にチェックできる無料ツールです。",
     type: "website",
     locale: "ja_JP",
@@ -31,7 +34,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "TrueDiet Reviewer｜ダイエット商品のステマ・口コミをAIで判定",
+    title: "🔍 ステマ判定｜TrueDiet Reviewer（AI口コミ解析）",
     description: "ダイエット商品のステマや定期縛りをAIが暴く！商品名を入れるだけで即解析（無料）",
     images: ["https://true-diet-reviewer.vercel.app/ogp.png"],
   },
