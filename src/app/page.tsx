@@ -156,35 +156,49 @@ export default function Home() {
           </button>
         </form>
 
-        {/* 最近解析された商品（AdSense対策兼ねたリンク集） */}
-        <div style={{ marginBottom: "2rem" }}>
-          <p style={{ fontSize: "0.85rem", fontWeight: "bold", color: "#64748b", marginBottom: "0.8rem", display: "flex", alignItems: "center", gap: "0.4rem" }}>
-            <Activity size={16} /> 最近解析された商品
+        {/* カテゴリー別：最近解析された商品（AdSense対策兼ねた大量リンク集） */}
+        <div style={{ marginBottom: "2.5rem" }}>
+          <p style={{ fontSize: "0.9rem", fontWeight: "bold", color: "#475569", marginBottom: "1rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+            <Activity size={18} color="var(--primary)" /> カテゴリー別：最近解析された商品
           </p>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: "0.6rem" }}>
-            {["ナイシトールZ", "防風通聖散", "メタバリアEX", "キラリ麹の炭クレンズ", "シボヘール", "内脂サポート"].map((p) => (
-              <button
-                key={p}
-                onClick={() => {
-                  setQuery(p);
-                  const ev = { preventDefault: () => {} } as React.FormEvent;
-                  handleSearch(ev);
-                }}
-                style={{
-                  padding: "0.4rem 0.8rem",
-                  borderRadius: "999px",
-                  border: "1px solid #e2e8f0",
-                  background: "#fff",
-                  fontSize: "0.80rem",
-                  color: "#475569",
-                  cursor: "pointer",
-                  transition: "all 0.2s"
-                }}
-                onMouseOver={(e) => e.currentTarget.style.borderColor = "var(--primary)"}
-                onMouseOut={(e) => e.currentTarget.style.borderColor = "#e2e8f0"}
-              >
-                {p}
-              </button>
+          
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.5rem" }}>
+            {[
+              { label: "🔥 脂肪燃焼・代謝", items: ["ナイシトールZ", "防風通聖散", "シボヘール", "内脂サポート", "大人のカロリミット", "ビスラットゴールド"] },
+              { label: "🍞 糖質・脂質カット", items: ["カロリミット", "メタバリアEX", "賢者の食卓", "トリプルカッター", "糖質ぱっくん", "ベジバリア"] },
+              { label: "🌿 菌活・酵素・腸内", items: ["キラリ麹の炭クレンズ", "ラクビ", "ビセラ", "コンブチャクレンズ", "ベルタ酵素", "万田酵素"] },
+              { label: "🥗 置き換え・食品", items: ["マイプロテイン", "ザバス", "コスミックエンザイム", "優光泉", "スリモア", "鍛神"] },
+            ].map((cat) => (
+              <div key={cat.label}>
+                <h4 style={{ fontSize: "0.8rem", color: "#64748b", marginBottom: "0.6rem", borderLeft: "3px solid var(--primary)", paddingLeft: "0.5rem" }}>{cat.label}</h4>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: "0.4rem" }}>
+                  {cat.items.map((p) => (
+                    <button
+                      key={p}
+                      onClick={() => {
+                        setQuery(p);
+                        const ev = { preventDefault: () => {} } as React.FormEvent;
+                        handleSearch(ev);
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                      }}
+                      style={{
+                        padding: "0.3rem 0.7rem",
+                        borderRadius: "8px",
+                        border: "1px solid #e2e8f0",
+                        background: "#fff",
+                        fontSize: "0.75rem",
+                        color: "#475569",
+                        cursor: "pointer",
+                        transition: "all 0.2s"
+                      }}
+                      onMouseOver={(e) => { e.currentTarget.style.borderColor = "var(--primary)"; e.currentTarget.style.background = "#f0f9ff"; }}
+                      onMouseOut={(e) => { e.currentTarget.style.borderColor = "#e2e8f0"; e.currentTarget.style.background = "#fff"; }}
+                    >
+                      {p}
+                    </button>
+                  ))}
+                </div>
+              </div>
             ))}
           </div>
         </div>
@@ -335,6 +349,40 @@ export default function Home() {
             </div>
           </div>
         )}
+      </div>
+
+      {/* 豆知識コラム（AdSense審査対策の独自記事セクション） */}
+      <div style={{ marginTop: "4rem", padding: "3rem 2rem", background: "linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)", borderRadius: "32px", border: "1px solid #e2e8f0" }}>
+        <h3 style={{ fontSize: "1.4rem", fontWeight: "900", color: "#0f172a", marginBottom: "2rem", textAlign: "center" }}>
+          📖 AIが教える、失敗しないダイエットサプリの選び方
+        </h3>
+        
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "2rem" }}>
+          <div style={{ background: "#fff", padding: "1.5rem", borderRadius: "20px", border: "1px solid #f1f5f9", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.02)" }}>
+            <h4 style={{ color: "var(--primary)", fontWeight: "800", marginBottom: "0.8rem", fontSize: "1.1rem" }}>1. 「魔法の言葉」に惑わされない</h4>
+            <p style={{ fontSize: "0.9rem", color: "#475569", lineHeight: "1.8" }}>
+              「寝ている間に」「運動なしで劇的変化」といった極端な表現には注意が必要です。サプリメントはあくまで食事や運動をサポートする「食品」であり、医薬品のような即効性はありません。AIの解析では、こうした過度な表現（ステマの可能性）を厳しくチェックしています。
+            </p>
+          </div>
+          <div style={{ background: "#fff", padding: "1.5rem", borderRadius: "20px", border: "1px solid #f1f5f9", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.02)" }}>
+            <h4 style={{ color: "var(--primary)", fontWeight: "800", marginBottom: "0.8rem", fontSize: "1.1rem" }}>2. 成分の「裏付け」を確認する</h4>
+            <p style={{ fontSize: "0.9rem", color: "#475569", lineHeight: "1.8" }}>
+              配合されている成分が、実際にどのような研究データに基づいているかを確認しましょう。当ツールの「成分根拠チェック」では、配合成分が科学的な信頼性（機能性表示食品の届出など）に基づいているかを可視化しています。
+            </p>
+          </div>
+          <div style={{ background: "#fff", padding: "1.5rem", borderRadius: "20px", border: "1px solid #f1f5f9", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.02)" }}>
+            <h4 style={{ color: "var(--primary)", fontWeight: "800", marginBottom: "0.8rem", fontSize: "1.1rem" }}>3. 「解約ルール」は購入前に必ず見る</h4>
+            <p style={{ fontSize: "0.9rem", color: "#475569", lineHeight: "1.8" }}>
+              初回価格が異常に安い商品は、数ヶ月間の継続が必須（定期縛り）となっているケースが多々あります。購入手続きを完了する前に、必ず「特定商取引法に基づく表記」を確認しましょう。当AIは口コミから解約トラブルの兆候も逃さず抽出します。
+            </p>
+          </div>
+          <div style={{ background: "#fff", padding: "1.5rem", borderRadius: "20px", border: "1px solid #f1f5f9", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.02)", display: "flex", flexDirection: "column", justifyContent: "center" }}>
+            <h4 style={{ color: "var(--primary)", fontWeight: "800", marginBottom: "0.8rem", fontSize: "1.1rem" }}>4. 購入前の「セカンドオピニオン」に</h4>
+            <p style={{ fontSize: "0.9rem", color: "#475569", lineHeight: "1.8" }}>
+              気になる商品を見つけたら、まず当サイトのAIに商品名を入力してみてください。WEB上の膨大なリアルボイスを10秒で集約。広告の裏側にある「本当の評判」を知ることで、納得のいくダイエット生活をサポートします。
+            </p>
+          </div>
+        </div>
       </div>
 
       {/* 当サイトについて（紹介セクション） */}
