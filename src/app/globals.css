@@ -285,10 +285,10 @@ body {
 .btn-x { background: #000; color: #fff; }
 .btn-line { background: #06C755; color: #fff; }
 .btn-fb { background: #1877F2; color: #fff; }
-.btn-hatebu { background: #00A4DE; color: #fff; }
+.btn-insta { background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc23b6 75%, #bc1888 100%); color: #fff; }
 .btn-copy { background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0 !important; }
 
-.share-btns a:hover, .share-btns button:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); opacity: 0.9; }
+.share-btns a:hover, .share-btns button:hover { transform: translateY(-3px); box-shadow: 0 6px 16px rgba(0,0,0,0.2); opacity: 0.95; }
 
 /* マネタイズ */
 .monetization-rich { border-top: 1px dashed #e2e8f0; padding-top: 3rem; }

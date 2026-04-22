@@ -325,10 +325,19 @@ export default function Home() {
             <div className="share-section-rich">
               <p>この判定結果をSNSで共有する</p>
               <div className="share-btns">
-                <a href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`「${result.productName}」のAI判定結果をチェックしました！\nステマ危険度: ${result.scores.stemaRisk.value}%\nhttps://true-diet-reviewer.vercel.app`)}`} target="_blank" className="btn-x">𝕏 ポスト</a>
-                <a href={`https://social-plugins.line.me/lineit/share?url=${encodeURIComponent("https://true-diet-reviewer.vercel.app")}`} target="_blank" className="btn-line">LINE</a>
-                <a href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent("https://true-diet-reviewer.vercel.app")}`} target="_blank" className="btn-fb">Facebook</a>
-                <a href={`http://b.hatena.ne.jp/add?mode=confirm&url=${encodeURIComponent("https://true-diet-reviewer.vercel.app")}`} target="_blank" className="btn-hatebu">はてブ</a>
+                <a href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`【AI判定】「${result.productName}」のステマ危険度は…『${result.scores.stemaRisk.value}%』でした！🔍\n\n判定：${result.verdict}\n${result.description}\n\n#TrueDietReviewer #ダイエット #ステマ判定\n`)}&url=${encodeURIComponent(`https://true-diet-reviewer.vercel.app/?q=${result.productName}`)}`} target="_blank" className="btn-x">𝕏 ポスト</a>
+                <a href={`https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(`https://true-diet-reviewer.vercel.app/?q=${result.productName}`)}`} target="_blank" className="btn-line">LINE</a>
+                <a href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(`https://true-diet-reviewer.vercel.app/?q=${result.productName}`)}`} target="_blank" className="btn-fb">Facebook</a>
+                <button 
+                  onClick={() => {
+                    navigator.clipboard.writeText(`【AI判定】「${result.productName}」の解析結果｜TrueDiet Reviewer\nhttps://true-diet-reviewer.vercel.app/?q=${encodeURIComponent(result.productName)}`);
+                    setCopyStatus("Instagram用にコピー完了！");
+                    setTimeout(() => setCopyStatus("Instagram"), 2000);
+                  }}
+                  className="btn-insta"
+                >
+                  {copyStatus === "リンクをコピー" ? "Instagram" : copyStatus}
+                </button>
                 <button 
                   onClick={() => {
                     navigator.clipboard.writeText(`「${result.productName}」のAI判定結果｜TrueDiet Reviewer\nhttps://true-diet-reviewer.vercel.app/?q=${encodeURIComponent(result.productName)}`);
