@@ -24,19 +24,19 @@ export const metadata: Metadata = {
     description: "AIがネット上の本音を可視化。ダイエットサプリ、美容コスメ、飲み合わせリスクをリアルタイム解析。",
     type: "website",
     locale: "ja_JP",
-    url: "https://true-diet-reviewer.vercel.app",
+    url: "https://truereview-ai.vercel.app",
     images: [{
-      url: "https://true-diet-reviewer.vercel.app/ogp.png?v=2",
+      url: "https://truereview-ai.vercel.app/ogp.png?v=2",
       width: 1200,
       height: 630,
-      alt: "TrueDiet Reviewer - AIダイエット商品判定ツール",
+      alt: "TrueReview AI - 総合解析ポータル",
     }],
   },
   twitter: {
     card: "summary_large_image",
     title: "TrueReview AI｜ダイエット・美容・健康の総合解析ポータル",
     description: "AIが口コミの本音を可視化。納得できる商品選びをサポートします（無料解析）",
-    images: ["https://true-diet-reviewer.vercel.app/ogp.png?v=2"],
+    images: ["https://truereview-ai.vercel.app/ogp.png?v=2"],
   },
 };
 

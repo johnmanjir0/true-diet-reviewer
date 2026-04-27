@@ -19,7 +19,7 @@ export default function ContactPage() {
               解析のリクエストや、掲載情報の修正依頼なども承っております。<br />
               以下のメールアドレスまでご連絡ください。
             </p>
-            <a href="mailto:info@true-diet-reviewer.vercel.app" style={{ 
+            <a href="mailto:info@truereview-ai.vercel.app" style={{ 
               fontSize: "1.5rem", 
               fontWeight: "900", 
               color: "var(--primary)", 
