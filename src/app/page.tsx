@@ -33,16 +33,16 @@ export default function PortalHome() {
               <Sparkles size={16} /> AI口コミ解析ポータル
             </div>
             <h1 style={{ 
-              fontSize: "3.5rem", 
+              fontSize: "3.2rem", 
               fontWeight: "900", 
-              letterSpacing: "-0.04em", 
-              lineHeight: "1.1",
+              letterSpacing: "-0.02em", 
+              lineHeight: "1.2",
               marginBottom: "1.5rem",
               background: "linear-gradient(135deg, #0f172a 0%, #334155 100%)",
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent"
             }}>
-              ネットの情報の「真実」を<br />AIがリアルタイムに可視化
+              AIによる口コミ・ステマ解析<br />総合ポータル
             </h1>
             
             {/* 統計セクション（信頼感の演出） */}
