@@ -385,12 +385,10 @@ export default function Home({ defaultQuery = "" }: { defaultQuery?: string }) {
             <p>
               気になる商品を見つけたら、まず当サイトのAIに商品名を入力してみてください。WEB上の膨大なリアルボイスを10秒で集約。広告の裏側にある「本当の評判」を知ることで、納得のいくダイエット生活をサポートします。
             </p>
-          </div>
         </div>
       </div>
-
-        </div>
-      </main>
+    </div>
+  </main>
       <Footer />
     </>
   );
