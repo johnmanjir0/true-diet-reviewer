@@ -34,6 +34,12 @@ export default function PrivacyPage() {
               当サイトのAIによる解析結果は、インターネット上の情報をAIが独自に収集・分析したものであり、その正確性、効果、安全性を保証するものではありません。
               当サイトから提供する情報に基づいて行われた、あらゆる行為および損害について、当サイトは一切の責任を負いません。
             </p>
+
+            <h2 style={{ fontSize: "1.2rem", fontWeight: "800", margin: "1.5rem 0 1rem" }}>5. お問い合わせ先</h2>
+            <p>
+              当サイトの個人情報の取り扱いに関するお問い合わせは、下記までご連絡ください。<br />
+              メールアドレス：gamesportalstudio@gmail.com
+            </p>
           </div>
         </div>
       </main>

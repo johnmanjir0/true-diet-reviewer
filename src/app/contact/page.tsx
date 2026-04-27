@@ -19,14 +19,14 @@ export default function ContactPage() {
               解析のリクエストや、掲載情報の修正依頼なども承っております。<br />
               以下のメールアドレスまでご連絡ください。
             </p>
-            <a href="mailto:info@truereview-ai.vercel.app" style={{ 
+            <a href="mailto:gamesportalstudio@gmail.com" style={{ 
               fontSize: "1.5rem", 
               fontWeight: "900", 
               color: "var(--primary)", 
               textDecoration: "none",
               borderBottom: "2px solid var(--primary)"
             }}>
-              info@truereview-ai.com
+              gamesportalstudio@gmail.com
             </a>
             <p style={{ color: "#94a3b8", fontSize: "0.85rem", marginTop: "2rem" }}>
               ※通常、3営業日以内にご返信いたします。
