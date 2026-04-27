@@ -200,14 +200,14 @@ const statStyle = {
   minWidth: "120px",
   border: "1px solid rgba(226, 232, 240, 0.8)",
   boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.02)"
-};
+} as const;
 
 const statNumStyle = {
   fontSize: "1.5rem",
   fontWeight: "900",
   color: "#0f172a",
   lineHeight: "1"
-};
+} as const;
 
 const statLabelStyle = {
   fontSize: "0.75rem",
@@ -216,4 +216,4 @@ const statLabelStyle = {
   marginTop: "0.4rem",
   textTransform: "uppercase",
   letterSpacing: "0.05em"
-};
+} as const;

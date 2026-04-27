@@ -60,4 +60,4 @@ const footerLinkStyle = {
   textDecoration: "none",
   fontWeight: "600",
   transition: "color 0.2s"
-};
+} as const;
