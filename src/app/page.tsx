@@ -83,7 +83,7 @@ export default function PortalHome() {
                 cursor: "pointer",
                 border: "1px solid rgba(234, 179, 8, 0.2)",
               }} onMouseOver={(e) => { e.currentTarget.style.transform = "translateY(-10px)"; }} onMouseOut={(e) => { e.currentTarget.style.transform = "translateY(0)"; }}>
-                <div style={{ background: "#fef9c3", width: "50px", height: "50px", borderRadius: "14px", display: "flex", alignItems: "center", justifyCenter: "center", marginBottom: "1.5rem" }}>
+                <div style={{ background: "#fef9c3", width: "50px", height: "50px", borderRadius: "14px", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: "1.5rem" }}>
                   <Zap color="#ca8a04" size={28} style={{ margin: "auto" }} />
                 </div>
                 <h3 style={{ fontSize: "1.5rem", fontWeight: "900", color: "#0f172a", marginBottom: "0.8rem" }}>ダイエット解析</h3>
@@ -105,7 +105,7 @@ export default function PortalHome() {
                 cursor: "pointer",
                 border: "1px solid rgba(236, 72, 153, 0.2)",
               }} onMouseOver={(e) => { e.currentTarget.style.transform = "translateY(-10px)"; }} onMouseOut={(e) => { e.currentTarget.style.transform = "translateY(0)"; }}>
-                <div style={{ background: "#fce7f3", width: "50px", height: "50px", borderRadius: "14px", display: "flex", alignItems: "center", justifyCenter: "center", marginBottom: "1.5rem" }}>
+                <div style={{ background: "#fce7f3", width: "50px", height: "50px", borderRadius: "14px", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: "1.5rem" }}>
                   <Heart color="#db2777" size={28} style={{ margin: "auto" }} />
                 </div>
                 <h3 style={{ fontSize: "1.5rem", fontWeight: "900", color: "#0f172a", marginBottom: "0.8rem" }}>美容・コスメ解析</h3>
@@ -127,7 +127,7 @@ export default function PortalHome() {
                 cursor: "pointer",
                 border: "1px solid rgba(34, 197, 94, 0.2)",
               }} onMouseOver={(e) => { e.currentTarget.style.transform = "translateY(-10px)"; }} onMouseOut={(e) => { e.currentTarget.style.transform = "translateY(0)"; }}>
-                <div style={{ background: "#dcfce7", width: "50px", height: "50px", borderRadius: "14px", display: "flex", alignItems: "center", justifyCenter: "center", marginBottom: "1.5rem" }}>
+                <div style={{ background: "#dcfce7", width: "50px", height: "50px", borderRadius: "14px", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: "1.5rem" }}>
                   <Stethoscope color="#16a34a" size={28} style={{ margin: "auto" }} />
                 </div>
                 <h3 style={{ fontSize: "1.5rem", fontWeight: "900", color: "#0f172a", marginBottom: "0.8rem" }}>健康・飲み合わせ</h3>

@@ -12,7 +12,7 @@ export default function ContactPage() {
           <p className="subtitle">ご意見、不具合報告、お仕事のご依頼はこちら</p>
 
           <div style={{ marginTop: "3rem", textAlign: "center", padding: "3rem", background: "#f8fafc", borderRadius: "24px" }}>
-            <div style={{ background: "#fff", width: "60px", height: "60px", borderRadius: "50%", display: "flex", alignItems: "center", justifyCenter: "center", margin: "0 auto 1.5rem", boxShadow: "var(--shadow-sm)" }}>
+            <div style={{ background: "#fff", width: "60px", height: "60px", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 1.5rem", boxShadow: "var(--shadow-sm)" }}>
               <Mail color="var(--primary)" size={32} style={{ margin: "auto" }} />
             </div>
             <p style={{ color: "#475569", fontSize: "1.1rem", marginBottom: "1.5rem" }}>
