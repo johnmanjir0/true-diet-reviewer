@@ -39,7 +39,8 @@ export default function HealthPage({ defaultQuery = "" }: { defaultQuery?: strin
     : null;
   const initialQuery = defaultQuery || searchParams?.get('q') || '';
 
-  const [query, setQuery] = useState(initialQuery);
+  const [query1, setQuery1] = useState("");
+  const [query2, setQuery2] = useState("");
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -59,7 +60,8 @@ export default function HealthPage({ defaultQuery = "" }: { defaultQuery?: strin
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!query.trim()) return;
+    if (!query1.trim()) return;
+    const combined = query2.trim() ? `${query1.trim()} と ${query2.trim()}` : query1.trim();
 
     setLoading(true);
     setResult(null);
@@ -69,7 +71,7 @@ export default function HealthPage({ defaultQuery = "" }: { defaultQuery?: strin
       const res = await fetch("/api/analyze/health", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ productName: query }),
+        body: JSON.stringify({ productName: combined }),
       });
       const data = await res.json();
       if (data.error) throw new Error(data.error);
@@ -117,13 +119,32 @@ export default function HealthPage({ defaultQuery = "" }: { defaultQuery?: strin
             </p>
           </div>
 
-          <form className="search-form" onSubmit={handleSearch}>
-            <div style={{ position: "relative", flex: 1 }}>
-              <Stethoscope className="search-icon" size={20} />
-              <input type="text" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="商品名や成分を入力（例：ロキソニンと便秘薬）" className="search-input" />
+          <form className="search-form" onSubmit={handleSearch} style={{ flexDirection: "column", gap: "0.8rem" }}>
+            <div style={{ display: "flex", gap: "0.8rem", alignItems: "center", flexWrap: "wrap" }}>
+              <div style={{ position: "relative", flex: 1, minWidth: "200px" }}>
+                <Stethoscope className="search-icon" size={20} />
+                <input
+                  type="text"
+                  value={query1}
+                  onChange={(e) => setQuery1(e.target.value)}
+                  placeholder="薬・サプリ① （例：ロキソニン）"
+                  className="search-input"
+                />
+              </div>
+              <div style={{ fontWeight: "900", fontSize: "1.5rem", color: "#16a34a", flexShrink: 0 }}>＋</div>
+              <div style={{ position: "relative", flex: 1, minWidth: "200px" }}>
+                <Stethoscope className="search-icon" size={20} />
+                <input
+                  type="text"
+                  value={query2}
+                  onChange={(e) => setQuery2(e.target.value)}
+                  placeholder="薬・サプリ② （例：血圧の薬）"
+                  className="search-input"
+                />
+              </div>
             </div>
-            <button type="submit" disabled={loading} className="search-button" style={{ background: "#16a34a" }}>
-              {loading ? "判定中..." : "判定する"}
+            <button type="submit" disabled={loading} className="search-button" style={{ background: "#16a34a", alignSelf: "flex-end" }}>
+              {loading ? "判定中..." : "飲み合わせを判定する"}
             </button>
           </form>
 
