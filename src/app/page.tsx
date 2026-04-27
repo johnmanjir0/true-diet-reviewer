@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { Sparkles, Heart, Zap, Stethoscope, ArrowRight, ShieldCheck, MessageSquare } from "lucide-react";
 import Header from "../components/Header";
