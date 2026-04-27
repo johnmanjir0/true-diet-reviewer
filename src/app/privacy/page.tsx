@@ -1,48 +1,43 @@
-import { Metadata } from "next";
-
-export const metadata: Metadata = {
-  title: "プライバシーポリシー | TrueDiet Reviewer",
-};
+import Header from "../../components/Header";
+import Footer from "../../components/Footer";
 
 export default function PrivacyPage() {
   return (
-    <main style={{ maxWidth: "800px", margin: "0 auto", padding: "2rem 1rem", color: "#334155", lineHeight: "1.8" }}>
-      <h1 style={{ fontSize: "1.8rem", fontWeight: "bold", marginBottom: "0.5rem" }}>プライバシーポリシー</h1>
-      <p style={{ color: "#64748b", marginBottom: "2rem" }}>最終更新日：2026年4月21日</p>
+    <>
+      <Header />
+      <main className="container">
+        <div className="glass-panel" style={{ marginTop: "2rem" }}>
+          <h1 className="title" style={{ fontSize: "2rem" }}>プライバシーポリシー</h1>
+          
+          <div style={{ marginTop: "2rem", color: "#334155", lineHeight: "1.8", fontSize: "0.95rem" }}>
+            <h2 style={{ fontSize: "1.2rem", fontWeight: "800", margin: "1.5rem 0 1rem" }}>1. 広告の配信について</h2>
+            <p>
+              当サイトでは、第三者配信の広告サービス「Google AdSense（グーグルアドセンス）」を利用しています。
+              広告配信事業者は、ユーザーの興味に応じた広告を表示するためにCookie（クッキー）を使用することがあります。
+            </p>
 
-      <section style={{ marginBottom: "2rem" }}>
-        <h2 style={{ fontSize: "1.2rem", fontWeight: "bold", borderBottom: "2px solid #e2e8f0", paddingBottom: "0.5rem", marginBottom: "1rem" }}>1. 収集する情報</h2>
-        <p>当サービス「TrueDiet Reviewer」（以下「本サービス」）は、以下の情報を収集することがあります。</p>
-        <ul style={{ paddingLeft: "1.5rem", marginTop: "0.5rem" }}>
-          <li>ユーザーが入力した商品名（解析目的のみに使用）</li>
-          <li>Google Analytics・Google AdSenseによるアクセスログ（IPアドレス、ブラウザ情報等）</li>
-          <li>LINE Botをご利用の場合：LINEのユーザーIDおよびメッセージ内容（返信目的のみ）</li>
-        </ul>
-      </section>
+            <h2 style={{ fontSize: "1.2rem", fontWeight: "800", margin: "1.5rem 0 1rem" }}>2. アクセス解析ツールについて</h2>
+            <p>
+              当サイトでは、Googleによるアクセス解析ツール「Googleアナリティクス」を利用しています。
+              このGoogleアナリティクスはトラフィックデータの収集のためにCookieを使用しています。
+              トラフィックデータは匿名で収集されており、個人を特定するものではありません。
+            </p>
 
-      <section style={{ marginBottom: "2rem" }}>
-        <h2 style={{ fontSize: "1.2rem", fontWeight: "bold", borderBottom: "2px solid #e2e8f0", paddingBottom: "0.5rem", marginBottom: "1rem" }}>2. 情報の利用目的</h2>
-        <ul style={{ paddingLeft: "1.5rem" }}>
-          <li>ダイエット商品の口コミ解析結果の提供</li>
-          <li>サービスの改善・統計分析</li>
-          <li>Google AdSenseによる広告配信</li>
-        </ul>
-      </section>
+            <h2 style={{ fontSize: "1.2rem", fontWeight: "800", margin: "1.5rem 0 1rem" }}>3. 個人情報の利用目的</h2>
+            <p>
+              当サイトでは、メールでのお問い合わせの際に、氏名（ハンドルネーム）、メールアドレス等の個人情報をご登録いただく場合がございます。
+              これらの個人情報は質問に対する回答や必要な情報を電子メールなどをでご連絡する場合に利用させていただくものであり、それ以外の目的では利用いたしません。
+            </p>
 
-      <section style={{ marginBottom: "2rem" }}>
-        <h2 style={{ fontSize: "1.2rem", fontWeight: "bold", borderBottom: "2px solid #e2e8f0", paddingBottom: "0.5rem", marginBottom: "1rem" }}>3. 第三者への提供</h2>
-        <p>収集した個人情報は、法令に基づく場合を除き、ユーザーの同意なく第三者に提供することはありません。</p>
-      </section>
-
-      <section style={{ marginBottom: "2rem" }}>
-        <h2 style={{ fontSize: "1.2rem", fontWeight: "bold", borderBottom: "2px solid #e2e8f0", paddingBottom: "0.5rem", marginBottom: "1rem" }}>4. Cookieの使用</h2>
-        <p>本サービスはGoogle AdSense・Google Analyticsを利用しており、これらがCookieを使用する場合があります。ブラウザの設定によりCookieを無効にすることが可能です。</p>
-      </section>
-
-      <section style={{ marginBottom: "2rem" }}>
-        <h2 style={{ fontSize: "1.2rem", fontWeight: "bold", borderBottom: "2px solid #e2e8f0", paddingBottom: "0.5rem", marginBottom: "1rem" }}>5. お問い合わせ</h2>
-        <p>プライバシーポリシーに関するお問い合わせは、LINE Bot経由またはSNSにてご連絡ください。</p>
-      </section>
-    </main>
+            <h2 style={{ fontSize: "1.2rem", fontWeight: "800", margin: "1.5rem 0 1rem" }}>4. 免責事項</h2>
+            <p>
+              当サイトのAIによる解析結果は、インターネット上の情報をAIが独自に収集・分析したものであり、その正確性、効果、安全性を保証するものではありません。
+              当サイトから提供する情報に基づいて行われた、あらゆる行為および損害について、当サイトは一切の責任を負いません。
+            </p>
+          </div>
+        </div>
+      </main>
+      <Footer />
+    </>
   );
 }

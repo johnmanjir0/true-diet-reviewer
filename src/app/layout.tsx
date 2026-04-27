@@ -13,15 +13,15 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "🔍 ステマ判定｜TrueDiet Reviewer（AI口コミ解析）",
-  description: "ダイエットサプリや痩せる商品の口コミをAIがリアルタイム解析。ステマ危険度・効果の信頼性・コスパ・副作用リスク・定期縛りの有無を徹底判定。購入前に必ずチェック！",
-  keywords: ["ダイエット", "サプリ", "口コミ", "ステマ", "判定", "AI", "副作用", "定期購入", "解約", "効果なし", "嘘"],
+  title: "TrueReview AI｜ダイエット・美容・健康の総合解析ポータル",
+  description: "AIがネット上の本音を可視化。ダイエットサプリ、美容コスメ、薬の飲み合わせリスクをリアルタイム解析。ステマや誇大広告に惑わされない、納得の選択をサポートする無料ツール群です。",
+  keywords: ["ステマ判定", "AI解析", "ダイエット", "美容コスメ", "飲み合わせ", "口コミ本音", "サプリメント", "成分解析", "解約トラブル"],
   icons: {
     icon: "/icon.png?v=2",
   },
   openGraph: {
-    title: "🔍 ステマ判定｜TrueDiet Reviewer（AI口コミ解析）",
-    description: "商品名を入力するだけでAIが口コミを多角的に解析。納得のいくダイエット選びをサポートする無料ツールです。",
+    title: "TrueReview AI｜ダイエット・美容・健康の総合解析ポータル",
+    description: "AIがネット上の本音を可視化。ダイエットサプリ、美容コスメ、飲み合わせリスクをリアルタイム解析。",
     type: "website",
     locale: "ja_JP",
     url: "https://true-diet-reviewer.vercel.app",
@@ -34,8 +34,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "🔍 ステマ判定｜TrueDiet Reviewer（AI口コミ解析）",
-    description: "AIが口コミの本音を可視化。納得できるダイエット選びをサポートします（無料解析）",
+    title: "TrueReview AI｜ダイエット・美容・健康の総合解析ポータル",
+    description: "AIが口コミの本音を可視化。納得できる商品選びをサポートします（無料解析）",
     images: ["https://true-diet-reviewer.vercel.app/ogp.png?v=2"],
   },
 };

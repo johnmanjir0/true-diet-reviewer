@@ -1,48 +1,42 @@
-import { Metadata } from "next";
-
-export const metadata: Metadata = {
-  title: "利用規約 | TrueDiet Reviewer",
-};
+import Header from "../../components/Header";
+import Footer from "../../components/Footer";
 
 export default function TermsPage() {
   return (
-    <main style={{ maxWidth: "800px", margin: "0 auto", padding: "2rem 1rem", color: "#334155", lineHeight: "1.8" }}>
-      <h1 style={{ fontSize: "1.8rem", fontWeight: "bold", marginBottom: "0.5rem" }}>利用規約</h1>
-      <p style={{ color: "#64748b", marginBottom: "2rem" }}>最終更新日：2026年4月21日</p>
+    <>
+      <Header />
+      <main className="container">
+        <div className="glass-panel" style={{ marginTop: "2rem" }}>
+          <h1 className="title" style={{ fontSize: "2rem" }}>利用規約</h1>
+          
+          <div style={{ marginTop: "2rem", color: "#334155", lineHeight: "1.8", fontSize: "0.95rem" }}>
+            <h2 style={{ fontSize: "1.2rem", fontWeight: "800", margin: "1.5rem 0 1rem" }}>1. サービスの利用</h2>
+            <p>
+              本サービスは、AIを用いてサプリメントやコスメ等の商品に関する情報の解析結果を提示するものです。
+              ユーザーは、本規約に同意の上、自己の責任において本サービスを利用するものとします。
+            </p>
 
-      <section style={{ marginBottom: "2rem" }}>
-        <h2 style={{ fontSize: "1.2rem", fontWeight: "bold", borderBottom: "2px solid #e2e8f0", paddingBottom: "0.5rem", marginBottom: "1rem" }}>1. サービスの概要</h2>
-        <p>「TrueDiet Reviewer」（以下「本サービス」）は、ダイエット商品に関するWEB上の口コミ情報をAIが自動収集・分析し、ステマリスクや成分根拠などの情報を提供する無料ツールです。</p>
-      </section>
+            <h2 style={{ fontSize: "1.2rem", fontWeight: "800", margin: "1.5rem 0 1rem" }}>2. 禁止事項</h2>
+            <p>
+              ・当サイトの情報を不正に取得、改ざん、または再配布する行為。<br />
+              ・サーバーに過度な負荷をかける自動スクリプトの実行。<br />
+              ・他者の知的財産権を侵害する行為。
+            </p>
 
-      <section style={{ marginBottom: "2rem" }}>
-        <h2 style={{ fontSize: "1.2rem", fontWeight: "bold", borderBottom: "2px solid #e2e8f0", paddingBottom: "0.5rem", marginBottom: "1rem" }}>2. 免責事項</h2>
-        <ul style={{ paddingLeft: "1.5rem" }}>
-          <li>本サービスの分析結果はAIによる自動生成であり、正確性・完全性を保証するものではありません。</li>
-          <li>商品の購入・使用に関する最終判断はユーザー自身でお願いいたします。</li>
-          <li>本サービスの利用により生じたいかなる損害についても、運営者は責任を負いません。</li>
-          <li>本サービスはアマゾンアソシエイト・楽天アフィリエイトに参加しており、商品リンクから購入した場合に報酬が発生することがあります。</li>
-        </ul>
-      </section>
+            <h2 style={{ fontSize: "1.2rem", fontWeight: "800", margin: "1.5rem 0 1rem" }}>3. 解析結果について</h2>
+            <p>
+              本サービスが提供する解析結果は、AIアルゴリズムによる推測を含むものであり、医学的・法的な証拠として使用することはできません。
+              また、解析結果は検索時点のデータに基づいているため、最新の情報とは異なる場合があります。
+            </p>
 
-      <section style={{ marginBottom: "2rem" }}>
-        <h2 style={{ fontSize: "1.2rem", fontWeight: "bold", borderBottom: "2px solid #e2e8f0", paddingBottom: "0.5rem", marginBottom: "1rem" }}>3. 禁止事項</h2>
-        <ul style={{ paddingLeft: "1.5rem" }}>
-          <li>本サービスへの不正アクセス・過度な自動リクエスト</li>
-          <li>サービスの内容を商業目的で無断転用すること</li>
-          <li>法令または公序良俗に反する利用</li>
-        </ul>
-      </section>
-
-      <section style={{ marginBottom: "2rem" }}>
-        <h2 style={{ fontSize: "1.2rem", fontWeight: "bold", borderBottom: "2px solid #e2e8f0", paddingBottom: "0.5rem", marginBottom: "1rem" }}>4. サービスの変更・終了</h2>
-        <p>運営者は予告なくサービスの内容を変更・終了する場合があります。</p>
-      </section>
-
-      <section style={{ marginBottom: "2rem" }}>
-        <h2 style={{ fontSize: "1.2rem", fontWeight: "bold", borderBottom: "2px solid #e2e8f0", paddingBottom: "0.5rem", marginBottom: "1rem" }}>5. 準拠法</h2>
-        <p>本規約は日本法に基づき解釈されるものとします。</p>
-      </section>
-    </main>
+            <h2 style={{ fontSize: "1.2rem", fontWeight: "800", margin: "1.5rem 0 1rem" }}>4. 規約の変更</h2>
+            <p>
+              当サイトは、必要と判断した場合には、ユーザーに通知することなくいつでも本規約を変更することができるものとします。
+            </p>
+          </div>
+        </div>
+      </main>
+      <Footer />
+    </>
   );
 }
