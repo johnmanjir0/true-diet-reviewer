@@ -119,7 +119,7 @@ export default function HealthPage({ defaultQuery = "" }: { defaultQuery?: strin
             </p>
           </div>
 
-          <form className="search-form" onSubmit={handleSearch} style={{ flexDirection: "column", gap: "0.8rem" }}>
+          <form onSubmit={handleSearch} style={{ display: "flex", flexDirection: "column", gap: "0.8rem", marginBottom: "1rem" }}>
             <div style={{ display: "flex", gap: "0.8rem", alignItems: "center", flexWrap: "wrap" }}>
               <div style={{ position: "relative", flex: 1, minWidth: "200px" }}>
                 <Stethoscope className="search-icon" size={20} />
@@ -143,7 +143,7 @@ export default function HealthPage({ defaultQuery = "" }: { defaultQuery?: strin
                 />
               </div>
             </div>
-            <button type="submit" disabled={loading} className="search-button" style={{ background: "#16a34a", alignSelf: "flex-end" }}>
+            <button type="submit" disabled={loading} className="search-button" style={{ background: "#16a34a" }}>
               {loading ? "判定中..." : "飲み合わせを判定する"}
             </button>
           </form>
