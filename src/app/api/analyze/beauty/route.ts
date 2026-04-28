@@ -72,7 +72,7 @@ ${searchContext}
     `;
 
     const apiKey = GEMINI_API_KEY.trim();
-    const MODELS = ['gemini-2.0-flash', 'gemini-1.5-flash'];
+    const MODELS = ['gemini-2.5-flash', 'gemini-2.0-flash'];
     let responseData = null;
     let lastErrorDetails = "";
 
