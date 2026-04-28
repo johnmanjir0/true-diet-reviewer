@@ -97,6 +97,7 @@ body {
 
 .search-button {
   padding: 0 2.5rem;
+  min-height: 60px;
   border: none;
   border-radius: 20px;
   background: #0f172a;
@@ -105,6 +106,7 @@ body {
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s;
+  white-space: nowrap;
 }
 .search-button:hover { background: #1e293b; transform: translateY(-1px); }
 .search-button:disabled { opacity: 0.6; cursor: not-allowed; }

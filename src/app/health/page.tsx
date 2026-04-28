@@ -148,7 +148,22 @@ export default function HealthPage({ defaultQuery = "" }: { defaultQuery?: strin
             </button>
           </form>
 
-          {error && <div className="error-message">{error}</div>}
+          {error && (
+            <div style={{ background: "#f0fdf4", border: "2px solid #4ade80", borderRadius: "20px", padding: "2rem", marginBottom: "2rem", textAlign: "center" }}>
+              <div style={{ fontSize: "2.5rem", marginBottom: "0.8rem" }}>🔍</div>
+              <h3 style={{ fontSize: "1.1rem", fontWeight: "800", color: "#166534", marginBottom: "0.5rem" }}>判定できませんでした</h3>
+              <p style={{ color: "#7c3aed", fontSize: "0.9rem", lineHeight: "1.7", marginBottom: "1rem" }}>{error}</p>
+              <div style={{ background: "#fff", borderRadius: "12px", padding: "1rem", fontSize: "0.85rem", color: "#475569", textAlign: "left" }}>
+                <p style={{ fontWeight: "700", marginBottom: "0.5rem" }}>💡 こんな場合は判定できないことがあります：</p>
+                <ul style={{ paddingLeft: "1.2rem", lineHeight: "2" }}>
+                  <li>薬品名・サプリ名のスペルが間違っている</li>
+                  <li>市販されていないマイナーな成分名</li>
+                  <li>略称や通称（正式な薬品名でお試しください）</li>
+                </ul>
+                <p style={{ marginTop: "0.8rem" }}>「ロキソニン と 血圧の薬」のように、正式名称または一般名でお試しください。</p>
+              </div>
+            </div>
+          )}
 
           {result && (
             <div className="result-container animate-fade-in">

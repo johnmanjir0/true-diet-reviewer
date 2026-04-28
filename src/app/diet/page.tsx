@@ -166,48 +166,22 @@ export default function Home({ defaultQuery = "" }: { defaultQuery?: string }) {
           </button>
         </form>
 
-        {/* カテゴリー別：最近解析された商品（AdSense対策兼ねた大量リンク集） */}
-        <div style={{ marginBottom: "2.5rem" }}>
-          <p style={{ fontSize: "0.9rem", fontWeight: "bold", color: "#475569", marginBottom: "1rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
-            <Activity size={18} color="var(--primary)" /> カテゴリー別：最近解析された商品
-          </p>
-          
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.5rem" }}>
-            {[
-              { label: "🔥 脂肪燃焼・代謝", items: ["ナイシトールZ", "防風通聖散", "シボヘール", "内脂サポート", "大人のカロリミット", "ビスラットゴールド"] },
-              { label: "🍞 糖質・脂質カット", items: ["カロリミット", "メタバリアEX", "賢者の食卓", "トリプルカッター", "糖質ぱっくん", "ベジバリア"] },
-              { label: "🌿 菌活・酵素・腸内", items: ["キラリ麹の炭クレンズ", "ラクビ", "ビセラ", "コンブチャクレンズ", "ベルタ酵素", "万田酵素"] },
-              { label: "🥗 置き換え・食品", items: ["マイプロテイン", "ザバス", "コスミックエンザイム", "優光泉", "スリモア", "鍛神"] },
-            ].map((cat) => (
-              <div key={cat.label}>
-                <h4 style={{ fontSize: "0.8rem", color: "#64748b", marginBottom: "0.6rem", borderLeft: "3px solid var(--primary)", paddingLeft: "0.5rem" }}>{cat.label}</h4>
-                <div style={{ display: "flex", flexWrap: "wrap", gap: "0.4rem" }}>
-                  {cat.items.map((p) => (
-                    <a
-                      key={p}
-                      href={`/diet/products/${encodeURIComponent(p)}`}
-                      style={{
-                        padding: "0.3rem 0.7rem",
-                        borderRadius: "8px",
-                        border: "1px solid #e2e8f0",
-                        background: "#fff",
-                        fontSize: "0.75rem",
-                        color: "#475569",
-                        textDecoration: "none",
-                        cursor: "pointer",
-                        transition: "all 0.2s"
-                      }}
-                    >
-                      {p}
-                    </a>
-                  ))}
-                </div>
-              </div>
-            ))}
+        {error && (
+          <div style={{ background: "#fff8f0", border: "2px solid #fb923c", borderRadius: "20px", padding: "2rem", marginBottom: "2rem", textAlign: "center" }}>
+            <div style={{ fontSize: "2.5rem", marginBottom: "0.8rem" }}>🔍</div>
+            <h3 style={{ fontSize: "1.1rem", fontWeight: "800", color: "#9a3412", marginBottom: "0.5rem" }}>解析できませんでした</h3>
+            <p style={{ color: "#7c3aed", fontSize: "0.9rem", lineHeight: "1.7", marginBottom: "1rem" }}>{error}</p>
+            <div style={{ background: "#fff", borderRadius: "12px", padding: "1rem", fontSize: "0.85rem", color: "#475569", textAlign: "left" }}>
+              <p style={{ fontWeight: "700", marginBottom: "0.5rem" }}>💡 こんな場合は解析できないことがあります：</p>
+              <ul style={{ paddingLeft: "1.2rem", lineHeight: "2" }}>
+                <li>商品名のスペルが間違っている</li>
+                <li>口コミ情報がほとんどない新発売商品</li>
+                <li>一般的に流通していない商品</li>
+              </ul>
+              <p style={{ marginTop: "0.8rem" }}>別の商品名や、正式名称でお試しください。</p>
+            </div>
           </div>
-        </div>
-
-        {error && <div className="error-message">{error}</div>}
+        )}
 
         {result && (
           <div className="result-container animate-fade-in">

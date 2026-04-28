@@ -129,7 +129,22 @@ export default function BeautyPage({ defaultQuery = "" }: { defaultQuery?: strin
              ))}
           </div>
 
-          {error && <div className="error-message">{error}</div>}
+          {error && (
+            <div style={{ background: "#fff0f6", border: "2px solid #f472b6", borderRadius: "20px", padding: "2rem", marginBottom: "2rem", textAlign: "center" }}>
+              <div style={{ fontSize: "2.5rem", marginBottom: "0.8rem" }}>🔍</div>
+              <h3 style={{ fontSize: "1.1rem", fontWeight: "800", color: "#9d174d", marginBottom: "0.5rem" }}>解析できませんでした</h3>
+              <p style={{ color: "#7c3aed", fontSize: "0.9rem", lineHeight: "1.7", marginBottom: "1rem" }}>{error}</p>
+              <div style={{ background: "#fff", borderRadius: "12px", padding: "1rem", fontSize: "0.85rem", color: "#475569", textAlign: "left" }}>
+                <p style={{ fontWeight: "700", marginBottom: "0.5rem" }}>💡 こんな場合は解析できないことがあります：</p>
+                <ul style={{ paddingLeft: "1.2rem", lineHeight: "2" }}>
+                  <li>商品名のスペルが間違っている</li>
+                  <li>口コミ情報がほとんどない新発売商品</li>
+                  <li>海外ブランドの英語表記など</li>
+                </ul>
+                <p style={{ marginTop: "0.8rem" }}>別の商品名や、正式名称・日本語名でお試しください。</p>
+              </div>
+            </div>
+          )}
 
           {result && (
             <div className="result-container animate-fade-in">
