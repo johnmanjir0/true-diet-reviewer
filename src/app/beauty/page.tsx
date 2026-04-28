@@ -5,6 +5,9 @@ import { Search, ShieldAlert, AlertTriangle, ShieldCheck, ThumbsUp, ThumbsDown, 
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import Breadcrumbs from "../../components/Breadcrumbs";
+import ShareButtons from "../../components/ShareButtons";
+import AnalysisHistory, { saveHistory } from "../../components/AnalysisHistory";
+import SearchSuggest from "../../components/SearchSuggest";
 
 interface ScoreDetail {
   value: number;
@@ -69,6 +72,7 @@ export default function BeautyPage({ defaultQuery = "" }: { defaultQuery?: strin
       const data = await res.json();
       if (data.error) throw new Error(data.error);
       setResult(data);
+      saveHistory({ tool: "beauty", name: query.trim(), riskLevel: data.riskLevel });
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -112,11 +116,20 @@ export default function BeautyPage({ defaultQuery = "" }: { defaultQuery?: strin
             </p>
           </div>
 
+          <AnalysisHistory tool="beauty" onSelect={(name) => { setQuery(name); }} />
+
           <form className="search-form" onSubmit={handleSearch}>
-            <div style={{ position: "relative", flex: 1 }}>
-              <Search className="search-icon" size={20} />
-              <input type="text" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="商品名を入力（例：導入美容液、ビタミンCサプリ）" className="search-input" />
-            </div>
+            <SearchSuggest
+              tool="beauty"
+              value={query}
+              onChange={setQuery}
+              placeholder="商品名を入力（例：導入美容液、ビタミンCサプリ）"
+              onSubmit={(name) => {
+                setQuery(name);
+                const fakeEvent = { preventDefault: () => {} } as React.FormEvent;
+                handleSearch(fakeEvent);
+              }}
+            />
             <button type="submit" disabled={loading} className="search-button" style={{ background: "#db2777" }}>
               {loading ? "解析中..." : "解析する"}
             </button>
@@ -198,6 +211,7 @@ export default function BeautyPage({ defaultQuery = "" }: { defaultQuery?: strin
                   ))}
                 </div>
               )}
+              <ShareButtons productName={result.productName} riskLevel={result.riskLevel} verdict={result.verdict} tool="beauty" />
             </div>
           )}
         </div>

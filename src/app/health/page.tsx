@@ -5,6 +5,9 @@ import { Search, ShieldAlert, AlertTriangle, ShieldCheck, ThumbsUp, ThumbsDown, 
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import Breadcrumbs from "../../components/Breadcrumbs";
+import ShareButtons from "../../components/ShareButtons";
+import AnalysisHistory, { saveHistory } from "../../components/AnalysisHistory";
+import SearchSuggest from "../../components/SearchSuggest";
 
 interface ScoreDetail {
   value: number;
@@ -76,6 +79,7 @@ export default function HealthPage({ defaultQuery = "" }: { defaultQuery?: strin
       const data = await res.json();
       if (data.error) throw new Error(data.error);
       setResult(data);
+      saveHistory({ tool: "health", name: combined, riskLevel: data.riskLevel });
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -119,16 +123,16 @@ export default function HealthPage({ defaultQuery = "" }: { defaultQuery?: strin
             </p>
           </div>
 
+          <AnalysisHistory tool="health" onSelect={(name) => { setQuery1(name); }} />
+
           <form onSubmit={handleSearch} style={{ display: "flex", flexDirection: "column", gap: "0.8rem", marginBottom: "1rem" }}>
             <div style={{ display: "flex", gap: "0.8rem", alignItems: "center", flexWrap: "wrap" }}>
-              <div style={{ position: "relative", flex: 1, minWidth: "200px" }}>
-                <Stethoscope className="search-icon" size={20} />
-                <input
-                  type="text"
+              <div style={{ flex: 1, minWidth: "200px" }}>
+                <SearchSuggest
+                  tool="health"
                   value={query1}
-                  onChange={(e) => setQuery1(e.target.value)}
+                  onChange={setQuery1}
                   placeholder="薬・サプリ① （例：ロキソニン）"
-                  className="search-input"
                 />
               </div>
               <div style={{ fontWeight: "900", fontSize: "1.5rem", color: "#16a34a", flexShrink: 0 }}>＋</div>
@@ -201,6 +205,7 @@ export default function HealthPage({ defaultQuery = "" }: { defaultQuery?: strin
                   <ul className="warning-list-rich">{result.warningPoints.map((p, i) => <li key={i}>{p}</li>)}</ul>
                 </div>
               )}
+              <ShareButtons productName={result.productName} riskLevel={result.riskLevel} verdict={result.verdict} tool="health" />
             </div>
           )}
         </div>

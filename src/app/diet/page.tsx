@@ -5,6 +5,9 @@ import { Search, ShieldAlert, AlertTriangle, ShieldCheck, ThumbsUp, ThumbsDown, 
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import Breadcrumbs from "../../components/Breadcrumbs";
+import ShareButtons from "../../components/ShareButtons";
+import AnalysisHistory, { saveHistory } from "../../components/AnalysisHistory";
+import SearchSuggest from "../../components/SearchSuggest";
 
 interface ScoreDetail {
   value: number;
@@ -80,6 +83,7 @@ export default function Home({ defaultQuery = "" }: { defaultQuery?: string }) {
       const data = await res.json();
       if (data.error) throw new Error(data.error);
       setResult(data);
+      saveHistory({ tool: "diet", name: query.trim(), riskLevel: data.riskLevel });
       
       const rakutenRes = await fetch(`/api/rakuten?keyword=${encodeURIComponent(query)}`);
       const rakutenData = await rakutenRes.json();
@@ -150,17 +154,20 @@ export default function Home({ defaultQuery = "" }: { defaultQuery?: string }) {
           </p>
         </div>
 
+        <AnalysisHistory tool="diet" onSelect={(name) => { setQuery(name); }} />
+
         <form className="search-form" onSubmit={handleSearch}>
-          <div style={{ position: "relative", flex: 1 }}>
-            <Search className="search-icon" size={20} />
-            <input
-              type="text"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="商品名を入力（例：ナイシトール）"
-              className="search-input"
-            />
-          </div>
+          <SearchSuggest
+            tool="diet"
+            value={query}
+            onChange={setQuery}
+            placeholder="商品名を入力（例：ナイシトール）"
+            onSubmit={(name) => {
+              setQuery(name);
+              const fakeEvent = { preventDefault: () => {} } as React.FormEvent;
+              handleSearch(fakeEvent);
+            }}
+          />
           <button type="submit" disabled={loading} className="search-button">
             {loading ? "解析中..." : "解析する"}
           </button>
@@ -325,6 +332,7 @@ export default function Home({ defaultQuery = "" }: { defaultQuery?: string }) {
                 <a href={`https://www.amazon.co.jp/s?k=${encodeURIComponent(result.productName)}&tag=s19801111-22`} target="_blank" className="amazon"><ShoppingCart size={18} /> Amazonで価格をチェック</a>
               </div>
             </div>
+            <ShareButtons productName={result.productName} riskLevel={result.riskLevel} verdict={result.verdict} tool="diet" />
           </div>
         )}
       </div>

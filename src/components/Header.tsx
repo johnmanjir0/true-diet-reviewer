@@ -30,6 +30,8 @@ export default function Header() {
         <Link href="/diet" className="nav-link">ダイエット</Link>
         <Link href="/beauty" className="nav-link">美容</Link>
         <Link href="/health" className="nav-link">健康・飲み合わせ</Link>
+        <Link href="/ranking" className="nav-link">ランキング</Link>
+        <Link href="/faq" className="nav-link">FAQ</Link>
       </nav>
 
       <style jsx>{`
