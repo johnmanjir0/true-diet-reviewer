@@ -169,7 +169,7 @@ export default function PortalHome() {
                       <p style={{ color: "#64748b", fontSize: "0.9rem", lineHeight: "1.6", marginBottom: "1.5rem" }}>
                         常用薬がある方や、複数のサプリを検討中の方へ。AIによる即時リスク判定。
                       </p>
-                      <button style={{ width: "100%", background: "#16a34a", color: "white", border: "none", padding: "0.8rem", borderRadius: "12px", fontWeight: "700", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem" }}>
+                      <button style={{ width: "100%", background: "#16a34a", color: "white", border: "none", padding: "0.8rem", borderRadius: "12px", fontWeight: "700", fontSize: "1rem", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem" }}>
                         安全性を確認する <ArrowRight size={18} />
                       </button>
                     </div>
