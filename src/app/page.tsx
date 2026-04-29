@@ -14,7 +14,6 @@ export default function PortalHome() {
         {/* ヒーローセクション */}
         <section style={{ 
           padding: "5rem 1.5rem", 
-          textAlign: "center",
           background: "linear-gradient(180deg, #f8fafc 0%, #ffffff 100%)",
           borderBottom: "1px solid #f1f5f9"
         }}>
@@ -184,7 +183,7 @@ export default function PortalHome() {
         {/* 信頼性セクション */}
         <section style={{ padding: "5rem 1.5rem", background: "white", borderTop: "1px solid #f1f5f9" }}>
           <div className="container">
-            <h2 style={{ fontSize: "2rem", fontWeight: "900", textAlign: "center", marginBottom: "3rem" }}>なぜ、AI解析なのか？</h2>
+            <h2 style={{ fontSize: "2rem", fontWeight: "900", marginBottom: "3rem" }}>なぜ、AI解析なのか？</h2>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "3rem" }}>
               <div style={{ display: "flex", gap: "1rem" }}>
                 <ShieldCheck size={40} color="var(--primary)" style={{ flexShrink: 0 }} />

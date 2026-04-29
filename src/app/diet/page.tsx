@@ -174,7 +174,7 @@ export default function Home({ defaultQuery = "" }: { defaultQuery?: string }) {
         </form>
 
         {error && (
-          <div style={{ background: "#fff8f0", border: "2px solid #fb923c", borderRadius: "20px", padding: "2rem", marginBottom: "2rem", textAlign: "center" }}>
+          <div style={{ background: "#fff8f0", border: "2px solid #fb923c", borderRadius: "20px", padding: "2rem", marginBottom: "2rem" }}>
             <div style={{ fontSize: "2.5rem", marginBottom: "0.8rem" }}>🔍</div>
             <h3 style={{ fontSize: "1.1rem", fontWeight: "800", color: "#9a3412", marginBottom: "0.5rem" }}>解析できませんでした</h3>
             <p style={{ color: "#7c3aed", fontSize: "0.9rem", lineHeight: "1.7", marginBottom: "1rem" }}>{error}</p>
@@ -339,7 +339,7 @@ export default function Home({ defaultQuery = "" }: { defaultQuery?: string }) {
 
       {/* 豆知識コラム（AdSense審査対策の独自記事セクション） */}
       <div className="column-section-rich">
-        <h3 style={{ fontSize: "1.4rem", fontWeight: "900", color: "#0f172a", marginBottom: "2rem", textAlign: "center" }}>
+        <h3 style={{ fontSize: "1.4rem", fontWeight: "900", color: "#0f172a", marginBottom: "2rem" }}>
           📖 AIが教える、失敗しないダイエットサプリの選び方
         </h3>
         

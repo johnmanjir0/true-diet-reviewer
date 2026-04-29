@@ -48,7 +48,6 @@ body {
 .title {
   font-size: 2.8rem;
   font-weight: 900;
-  text-align: center;
   color: #0f172a;
   margin-bottom: 0.5rem;
   letter-spacing: -0.04em;
@@ -58,7 +57,6 @@ body {
 }
 
 .subtitle {
-  text-align: center;
   color: #64748b;
   font-size: 1.1rem;
   font-weight: 500;
@@ -330,7 +328,7 @@ body {
 .shop-links-rich a:hover { opacity: 0.9; transform: scale(1.01); }
 
 /* フッター */
-.footer-rich { margin-top: 2rem; border-top: 1px solid #e2e8f0; padding: 1.8rem 0; text-align: center; }
+.footer-rich { margin-top: 2rem; border-top: 1px solid #e2e8f0; padding: 1.8rem 0; }
 .footer-links { display: flex; justify-content: center; gap: 2rem; margin-bottom: 1.5rem; }
 .footer-links a { font-size: 0.9rem; color: #64748b; text-decoration: none; font-weight: 600; }
 .menseki { font-size: 0.8rem; color: #94a3b8; line-height: 1.8; max-width: 600px; margin: 0 0 1.5rem; text-align: left; }

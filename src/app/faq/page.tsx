@@ -93,7 +93,7 @@ export default function FAQPage() {
       <Header />
       <main className="container">
         <div className="glass-panel" style={{ marginTop: "2rem" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: "0.5rem", justifyContent: "center" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: "0.5rem" }}>
             <HelpCircle size={36} color="var(--primary)" />
             <h1 className="title" style={{ margin: 0 }}>よくある質問</h1>
           </div>
@@ -129,7 +129,7 @@ export default function FAQPage() {
             </div>
           ))}
 
-          <div style={{ background: "linear-gradient(135deg, var(--primary) 0%, #3b82f6 100%)", borderRadius: "20px", padding: "2rem", textAlign: "center", color: "white", marginTop: "2rem" }}>
+          <div style={{ background: "linear-gradient(135deg, var(--primary) 0%, #3b82f6 100%)", borderRadius: "20px", padding: "2rem", color: "white", marginTop: "2rem" }}>
             <p style={{ fontSize: "1rem", fontWeight: "700", marginBottom: "1rem" }}>解決しない場合はお気軽にお問い合わせください</p>
             <a href="/contact" style={{ display: "inline-block", background: "white", color: "var(--primary)", padding: "0.7rem 2rem", borderRadius: "12px", fontWeight: "800", textDecoration: "none", fontSize: "0.9rem" }}>
               お問い合わせフォームへ

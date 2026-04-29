@@ -153,7 +153,7 @@ export default function HealthPage({ defaultQuery = "" }: { defaultQuery?: strin
           </form>
 
           {error && (
-            <div style={{ background: "#f0fdf4", border: "2px solid #4ade80", borderRadius: "20px", padding: "2rem", marginBottom: "2rem", textAlign: "center" }}>
+            <div style={{ background: "#f0fdf4", border: "2px solid #4ade80", borderRadius: "20px", padding: "2rem", marginBottom: "2rem" }}>
               <div style={{ fontSize: "2.5rem", marginBottom: "0.8rem" }}>🔍</div>
               <h3 style={{ fontSize: "1.1rem", fontWeight: "800", color: "#166534", marginBottom: "0.5rem" }}>判定できませんでした</h3>
               <p style={{ color: "#7c3aed", fontSize: "0.9rem", lineHeight: "1.7", marginBottom: "1rem" }}>{error}</p>

@@ -143,7 +143,7 @@ export default function BeautyPage({ defaultQuery = "" }: { defaultQuery?: strin
           </div>
 
           {error && (
-            <div style={{ background: "#fff0f6", border: "2px solid #f472b6", borderRadius: "20px", padding: "2rem", marginBottom: "2rem", textAlign: "center" }}>
+            <div style={{ background: "#fff0f6", border: "2px solid #f472b6", borderRadius: "20px", padding: "2rem", marginBottom: "2rem" }}>
               <div style={{ fontSize: "2.5rem", marginBottom: "0.8rem" }}>🔍</div>
               <h3 style={{ fontSize: "1.1rem", fontWeight: "800", color: "#9d174d", marginBottom: "0.5rem" }}>解析できませんでした</h3>
               <p style={{ color: "#7c3aed", fontSize: "0.9rem", lineHeight: "1.7", marginBottom: "1rem" }}>{error}</p>

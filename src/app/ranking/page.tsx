@@ -42,7 +42,7 @@ export default function RankingPage() {
       <Header />
       <main className="container">
         <div className="glass-panel" style={{ marginTop: "2rem" }}>
-          <div style={{ textAlign: "center", marginBottom: "3rem" }}>
+          <div style={{ marginBottom: "3rem" }}>
             <Trophy size={40} color="#f59e0b" style={{ marginBottom: "1rem" }} />
             <h1 className="title">AI解析ランキング</h1>
             <p className="subtitle">AIが分析した、知っておくべき健康・美容商品の傾向まとめ</p>
@@ -125,7 +125,7 @@ export default function RankingPage() {
             </div>
           </section>
 
-          <div style={{ textAlign: "center", padding: "2rem", background: "#f8fafc", borderRadius: "20px" }}>
+          <div style={{ padding: "2rem", background: "#f8fafc", borderRadius: "20px" }}>
             <p style={{ fontWeight: "700", color: "#0f172a", marginBottom: "1rem" }}>気になる商品を今すぐAIで解析してみましょう</p>
             <div style={{ display: "flex", gap: "1rem", justifyContent: "center", flexWrap: "wrap" }}>
               <Link href="/diet" style={{ background: "var(--primary)", color: "#fff", padding: "0.7rem 1.5rem", borderRadius: "12px", textDecoration: "none", fontWeight: "700", fontSize: "0.9rem" }}>ダイエット解析</Link>

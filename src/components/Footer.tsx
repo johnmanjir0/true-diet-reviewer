@@ -43,7 +43,7 @@ export default function Footer() {
           </div>
         </div>
 
-        <div style={{ borderTop: "1px solid #f1f5f9", paddingTop: "2rem", textAlign: "center" }}>
+        <div style={{ borderTop: "1px solid #f1f5f9", paddingTop: "2rem" }}>
           <p style={{ fontSize: "0.75rem", color: "#94a3b8", lineHeight: "2", maxWidth: "800px", margin: "0 auto 1.5rem" }}>
             【免責事項】当サイトの分析結果はAIアルゴリズムによる自動生成であり、情報の完全性、正確性、有用性を保証するものではありません。
             特にお薬やサプリメントの服用に関しては、必ず医師・薬剤師等の専門家にご相談ください。当サイトの利用により生じた一切の損害について責任を負いかねます。
