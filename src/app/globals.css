@@ -32,7 +32,7 @@ body {
 .container {
   max-width: 850px;
   margin: 0 auto;
-  padding: 2rem 1.5rem;
+  padding: 1.2rem 1.2rem;
 }
 
 .glass-panel {
@@ -40,9 +40,9 @@ body {
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.4);
-  border-radius: 32px;
+  border-radius: 24px;
   box-shadow: var(--shadow);
-  padding: 3rem 2rem;
+  padding: 2rem 1.8rem;
 }
 
 .title {
@@ -67,17 +67,17 @@ body {
 /* 検索フォーム */
 .search-form {
   display: flex;
-  gap: 0.8rem;
-  margin-bottom: 2rem;
+  gap: 0.6rem;
+  margin-bottom: 1.2rem;
   width: 100%;
 }
 
 .search-input {
   width: 100%;
-  padding: 1.2rem 1.5rem 1.2rem 3.5rem;
-  font-size: 1.1rem;
+  padding: 0.9rem 1.2rem 0.9rem 3rem;
+  font-size: 1rem;
   border: 2px solid #e2e8f0;
-  border-radius: 20px;
+  border-radius: 16px;
   background: #ffffff;
   transition: all 0.2s;
   outline: none;
@@ -96,13 +96,13 @@ body {
 }
 
 .search-button {
-  padding: 0 2.5rem;
-  min-height: 60px;
+  padding: 0 2rem;
+  min-height: 50px;
   border: none;
-  border-radius: 20px;
+  border-radius: 16px;
   background: #0f172a;
   color: white;
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s;
@@ -117,8 +117,8 @@ body {
   justify-content: space-between;
   align-items: center;
   padding: 2rem;
-  border-radius: 24px;
-  margin-bottom: 2rem;
+  border-radius: 20px;
+  margin-bottom: 1.2rem;
   color: #fff;
   position: relative;
   overflow: hidden;
@@ -145,9 +145,9 @@ body {
 /* AI結論カード */
 .verdict-card-rich {
   background: white;
-  border-radius: 24px;
-  padding: 2rem;
-  margin-bottom: 2rem;
+  border-radius: 20px;
+  padding: 1.5rem;
+  margin-bottom: 1.2rem;
   border: 1px solid #e2e8f0;
   box-shadow: var(--shadow-sm);
 }
@@ -159,15 +159,15 @@ body {
 /* スコアグリッド */
 .score-grid-rich {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1.2rem;
-  margin-bottom: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 0.8rem;
+  margin-bottom: 1.2rem;
 }
 
 .score-card-rich {
   background: white;
-  border-radius: 20px;
-  padding: 1.5rem;
+  border-radius: 16px;
+  padding: 1rem;
   border: 1px solid #e2e8f0;
   transition: transform 0.2s;
 }
@@ -192,13 +192,13 @@ body {
 .details-grid-rich {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
-  margin-bottom: 2rem;
+  gap: 1rem;
+  margin-bottom: 1.2rem;
 }
 
 .details-column {
-  padding: 1.8rem;
-  border-radius: 24px;
+  padding: 1.2rem;
+  border-radius: 16px;
 }
 .details-column:nth-child(1) { background: #f0fdf4; border: 1px solid #dcfce7; }
 .details-column:nth-child(2) { background: #fef2f2; border: 1px solid #fee2e2; }
@@ -223,9 +223,9 @@ body {
 .warning-card-rich {
   background: #fffbeb;
   border: 1px solid #fef3c7;
-  border-radius: 24px;
-  padding: 1.8rem;
-  margin-bottom: 2rem;
+  border-radius: 16px;
+  padding: 1.2rem;
+  margin-bottom: 1.2rem;
 }
 .warning-card-rich h3 { color: #92400e; font-size: 1.1rem; font-weight: 800; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
 .warning-list-rich { list-style: none; }
@@ -263,9 +263,9 @@ body {
 /* 成分チェック */
 .ingredients-card-rich {
   background: #f8fafc;
-  border-radius: 24px;
-  padding: 1.8rem;
-  margin-bottom: 2rem;
+  border-radius: 16px;
+  padding: 1.2rem;
+  margin-bottom: 1.2rem;
   border: 1px solid #e2e8f0;
 }
 .ingredients-card-rich h3 { font-size: 1.1rem; font-weight: 800; color: #1e293b; margin-bottom: 1.2rem; }
@@ -291,10 +291,10 @@ body {
 
 /* 豆知識コラム */
 .column-section-rich {
-  margin-top: 4rem;
-  padding: 3rem 2rem;
+  margin-top: 2rem;
+  padding: 1.8rem 1.5rem;
   background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-  border-radius: 32px;
+  border-radius: 20px;
   border: 1px solid #e2e8f0;
 }
 .column-grid-rich {
@@ -330,7 +330,7 @@ body {
 .shop-links-rich a:hover { opacity: 0.9; transform: scale(1.01); }
 
 /* フッター */
-.footer-rich { margin-top: 4rem; border-top: 1px solid #e2e8f0; padding: 3rem 0; text-align: center; }
+.footer-rich { margin-top: 2rem; border-top: 1px solid #e2e8f0; padding: 1.8rem 0; text-align: center; }
 .footer-links { display: flex; justify-content: center; gap: 2rem; margin-bottom: 1.5rem; }
 .footer-links a { font-size: 0.9rem; color: #64748b; text-decoration: none; font-weight: 600; }
 .menseki { font-size: 0.8rem; color: #94a3b8; line-height: 1.8; max-width: 600px; margin: 0 0 1.5rem; text-align: left; }
@@ -338,7 +338,7 @@ body {
 
 @media (max-width: 640px) {
   .details-grid-rich, .info-grid-rich, .score-grid-rich, .column-grid-rich { grid-template-columns: 1fr; }
-  .column-section-rich { padding: 2rem 1.2rem; }
-  .title { font-size: 2.2rem; }
-  .glass-panel { padding: 2rem 1.2rem; }
+  .column-section-rich { padding: 1.2rem 1rem; }
+  .title { font-size: 2rem; }
+  .glass-panel { padding: 1.5rem 1rem; }
 }
