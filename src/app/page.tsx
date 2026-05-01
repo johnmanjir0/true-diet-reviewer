@@ -13,7 +13,7 @@ export default function PortalHome() {
       <main style={{ flex: 1 }}>
         {/* ヒーローセクション */}
         <section style={{ 
-          padding: "5rem 1.5rem", 
+          padding: "2.5rem 1.5rem", 
           background: "linear-gradient(180deg, #f8fafc 0%, #ffffff 100%)",
           borderBottom: "1px solid #f1f5f9"
         }}>
