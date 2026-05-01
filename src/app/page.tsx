@@ -18,57 +18,58 @@ export default function PortalHome() {
           borderBottom: "1px solid #f1f5f9"
         }}>
           <div className="container animate-fade-in">
-            <div style={{ 
-              display: "inline-flex", 
-              alignItems: "center", 
-              gap: "0.5rem", 
-              background: "rgba(14, 165, 233, 0.1)", 
-              color: "var(--primary)",
-              padding: "0.5rem 1rem",
-              borderRadius: "99px",
-              fontSize: "0.85rem",
-              fontWeight: "700",
-              marginBottom: "2rem"
-            }}>
-              <Sparkles size={16} /> AI口コミ解析ポータル
-            </div>
-            <h1 style={{ 
-              fontSize: "3.2rem", 
-              fontWeight: "900", 
-              letterSpacing: "-0.02em", 
-              lineHeight: "1.2",
-              marginBottom: "1.5rem",
-              background: "linear-gradient(135deg, #0f172a 0%, #334155 100%)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent"
-            }}>
-              AIによる口コミ・ステマ解析<br />総合ポータル
-            </h1>
-            
-            <div style={{ 
-              display: "flex", 
-              justifyContent: "center", 
-              gap: "2rem", 
-              marginBottom: "3rem", 
-              flexWrap: "wrap" 
-            }}>
-              <div style={statStyle}>
-                <span style={statNumStyle}>24/7</span>
-                <span style={statLabelStyle}>AI常時監視</span>
+            <div style={{ maxWidth: "650px", margin: "0 auto", textAlign: "left" }}>
+              <div style={{ 
+                display: "inline-flex", 
+                alignItems: "center", 
+                gap: "0.5rem", 
+                background: "rgba(14, 165, 233, 0.1)", 
+                color: "var(--primary)",
+                padding: "0.5rem 1rem",
+                borderRadius: "99px",
+                fontSize: "0.85rem",
+                fontWeight: "700",
+                marginBottom: "1.5rem"
+              }}>
+                <Sparkles size={16} /> AI口コミ解析ポータル
               </div>
-              <div style={statStyle}>
-                <span style={statNumStyle}>10万+</span>
-                <span style={statLabelStyle}>学習データ量</span>
+              <h1 style={{ 
+                fontSize: "3.2rem", 
+                fontWeight: "900", 
+                letterSpacing: "-0.02em", 
+                lineHeight: "1.2",
+                marginBottom: "1.5rem",
+                background: "linear-gradient(135deg, #0f172a 0%, #334155 100%)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent"
+              }}>
+                AIによる口コミ・ステマ解析<br />総合ポータル
+              </h1>
+              
+              <div style={{ 
+                display: "flex", 
+                gap: "2rem", 
+                marginBottom: "2rem", 
+                flexWrap: "wrap" 
+              }}>
+                <div style={statStyle}>
+                  <span style={statNumStyle}>24/7</span>
+                  <span style={statLabelStyle}>AI常時監視</span>
+                </div>
+                <div style={statStyle}>
+                  <span style={statNumStyle}>10万+</span>
+                  <span style={statLabelStyle}>学習データ量</span>
+                </div>
+                <div style={statStyle}>
+                  <span style={statNumStyle}>100%</span>
+                  <span style={statLabelStyle}>第三者解析</span>
+                </div>
               </div>
-              <div style={statStyle}>
-                <span style={statNumStyle}>100%</span>
-                <span style={statLabelStyle}>第三者解析</span>
-              </div>
-            </div>
 
-            <p style={{ fontSize: "1.2rem", color: "#64748b", maxWidth: "600px", margin: "0 auto 2.5rem", lineHeight: "1.6" }}>
-               AIが口コミの本音と成分リスクを冷静に解析。納得の商品選びと、毎日の安心を強力にサポートします。
-            </p>
+              <p style={{ fontSize: "1.1rem", color: "#64748b", lineHeight: "1.6" }}>
+                AIが口コミの本音と成分リスクを冷静に解析。納得の商品選びと、毎日の安心を強力にサポートします。
+              </p>
+            </div>
           </div>
         </section>
 
