@@ -305,15 +305,6 @@ export default function Home({ defaultQuery = "" }: { defaultQuery?: string }) {
               </div>
             )}
 
-            {/* SNSシェア */}
-            <div className="share-section-rich">
-              <p>この判定結果をSNSで共有する</p>
-              <div className="share-btns">
-                <a href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`【AI判定】「${result.productName}」の結果は…😱\n\n🛡️ ステマ危険度: ${result.scores.stemaRisk.value}%\n📊 結論：${result.verdict}\n\n詳細をチェック👇\n#TrueDietReviewer #ダイエット\n`)}&url=${encodeURIComponent(`https://true-diet-reviewer.vercel.app/?q=${result.productName}`)}`} target="_blank" className="btn-x">𝕏 でポストして共有</a>
-                <a href={`https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(`https://true-diet-reviewer.vercel.app/?q=${result.productName}`)}`} target="_blank" className="btn-line">LINEで友達に教える</a>
-              </div>
-            </div>
-
             {/* マネタイズ */}
             <div className="monetization-rich">
               <div className="ad-banner">スポンサーリンク</div>
