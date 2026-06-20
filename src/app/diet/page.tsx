@@ -309,19 +309,75 @@ export default function Home({ defaultQuery = "" }: { defaultQuery?: string }) {
             <div className="monetization-rich">
               <div className="ad-banner">スポンサーリンク</div>
               <h3 className="section-title-sub">📦 解析した商品はこちら</h3>
-              {result.imageUrl && (
-                <div className="product-card-rich">
-                  <img src={result.imageUrl} alt={result.productName} />
-                  <div className="product-info">
-                    <strong>{result.productName}</strong>
-                    <p>画像はWEB検索結果から引用</p>
+
+              {/* 商品画像 + 購入リンク 横並びカード */}
+              {(() => {
+                const rakutenItem = rakutenItems[0]?.Item ?? rakutenItems[0];
+                const imgUrl = rakutenItem?.mediumImageUrls?.[0]?.imageUrl
+                  || rakutenItem?.smallImageUrls?.[0]?.imageUrl
+                  || result.imageUrl;
+                const itemName = rakutenItem?.itemName || result.productName;
+                const itemPrice = rakutenItem?.itemPrice;
+
+                return (
+                  <div style={{
+                    display: "flex",
+                    gap: "1.2rem",
+                    alignItems: "flex-start",
+                    background: "#fff",
+                    borderRadius: "16px",
+                    border: "1px solid #e2e8f0",
+                    padding: "1.2rem",
+                    marginBottom: "1rem",
+                    flexWrap: "wrap",
+                  }}>
+                    {/* 商品画像 */}
+                    {imgUrl && (
+                      <div style={{ flexShrink: 0 }}>
+                        <img
+                          src={imgUrl}
+                          alt={itemName}
+                          style={{
+                            width: "120px",
+                            height: "120px",
+                            objectFit: "contain",
+                            borderRadius: "10px",
+                            border: "1px solid #f1f5f9",
+                            background: "#fafafa",
+                          }}
+                          onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
+                        />
+                      </div>
+                    )}
+
+                    {/* 商品情報 + リンク */}
+                    <div style={{ flex: 1, minWidth: "180px" }}>
+                      <p style={{
+                        fontWeight: "700",
+                        fontSize: "0.95rem",
+                        color: "#0f172a",
+                        marginBottom: "0.3rem",
+                        lineHeight: "1.4",
+                        display: "-webkit-box",
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: "vertical",
+                        overflow: "hidden",
+                      }}>
+                        {itemName}
+                      </p>
+                      {itemPrice && (
+                        <p style={{ fontSize: "1.1rem", fontWeight: "800", color: "#bf0000", marginBottom: "0.8rem" }}>
+                          ¥{itemPrice.toLocaleString()}〜
+                        </p>
+                      )}
+                      <div className="shop-links-rich">
+                        <a href={`https://hb.afl.rakuten.co.jp/ichiba/52f1f988.9bcb825b.52f1f989.d0a8b332/?pc=${encodeURIComponent(`https://search.rakuten.co.jp/search/mall/${result.productName}/`)}&link_type=text`} target="_blank" className="rakuten"><ShoppingCart size={18} /> 楽天市場で購入・比較</a>
+                        <a href={`https://www.amazon.co.jp/s?k=${encodeURIComponent(result.productName)}&tag=s19801111-22`} target="_blank" className="amazon"><ShoppingCart size={18} /> Amazonで価格をチェック</a>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              )}
-              <div className="shop-links-rich">
-                <a href={`https://hb.afl.rakuten.co.jp/ichiba/52f1f988.9bcb825b.52f1f989.d0a8b332/?pc=${encodeURIComponent(`https://search.rakuten.co.jp/search/mall/${result.productName}/`)}&link_type=text`} target="_blank" className="rakuten"><ShoppingCart size={18} /> 楽天市場で購入・比較</a>
-                <a href={`https://www.amazon.co.jp/s?k=${encodeURIComponent(result.productName)}&tag=s19801111-22`} target="_blank" className="amazon"><ShoppingCart size={18} /> Amazonで価格をチェック</a>
-              </div>
+                );
+              })()}
             </div>
             <ShareButtons productName={result.productName} riskLevel={result.riskLevel} verdict={result.verdict} tool="diet" />
           </div>
